@@ -1,0 +1,58 @@
+//******************************************************************************************************************************
+// Copyright (c) 2017-2018 Qualcomm Technologies, Inc.
+// All Rights Reserved.
+// Confidential and Proprietary - Qualcomm Technologies, Inc.
+//******************************************************************************************************************************
+
+/**
+********************************************************************************************************************************
+* @file  eglwaylandupdater.h
+* @brief Wayland WL Surface Updater class. This class is used by the wayland surface
+********************************************************************************************************************************
+*/
+
+#ifndef EGLWAYLANDUPDATER_H
+#define EGLWAYLANDUPDATER_H
+
+#include "egltypes.h"
+
+enum UpdaterStatus
+{
+    UpdaterStatusRunning   = 0, ///< Running
+    UpdaterStatusTerminate = 1, ///< Terminate
+};
+
+typedef EGLVOID (*PFNEGL_UPDATERFUNC)(EGLVOID* pSurface, EGLUINT bufferIndex);
+class EglWaylandUpdater final
+{
+public:
+    static EglWaylandUpdater* Create(EGLVOID*           pSurface,
+                                     EGLUINT            bufQueueLength,
+                                     EGLBOOL            createWorkThread,
+                                     PFNEGL_UPDATERFUNC pFnUpdaterFunc);
+    EGLVOID   UpdateBuffer(EGLUINT bufferIndex);
+    EGLVOID   Destroy();
+private:
+    static EGLVOID UpdaterThreadEntry(EGLVOID* data) {(reinterpret_cast<EglWaylandUpdater*>(data))->UpdaterThread();}
+    explicit EglWaylandUpdater(EGLVOID* pSurface, EGLUINT bufQueueLength, PFNEGL_UPDATERFUNC pFnUpdaterFunc);
+    ~EglWaylandUpdater();
+    EglWaylandUpdater(const EglWaylandUpdater& other);
+    EglWaylandUpdater& operator=(const EglWaylandUpdater& other);
+    EGLBOOL                     InitQueue();
+    EGLVOID                     DeInitQueue();
+    EGLVOID                     EnqueueUpdaterBuffer(EGLUINT bufferIndex);
+    EGLUINT                     DequeueUpdaterBuffer();
+    EGLVOID                     UpdaterThread();
+
+    EGLVOID*                    m_pSurface;           ///< Update buffer for this surface
+    PFNEGL_UPDATERFUNC          m_pFnUpdaterFunc;     ///< Pointer to update function
+    EGLUINT                     m_inPos;              ///< Enqueue buffer to m_pBufIndexQueue[m_inPos]
+    EGLUINT                     m_outPos;             ///< Dequeue buffer from m_pBufIndexQueue[m_outPos]
+    EGLUINT                     m_bufQueueLength;     ///< The length of m_pBufIndexQueue
+    EGLUINT*                    m_pBufIndexQueue;     ///< Queue for buffer indexes
+    pthread_t                   m_hThread;            ///< Handle to update thread
+    pthread_mutex_t             m_mutex;              ///< Mutex protect for members of this object
+    pthread_cond_t              m_condVar;            ///< Condition variable signal when members of this object changed
+    volatile EGLUINT            m_threadStatus;       ///< Status for update thread
+};
+#endif // EGLWAYLANDUPDATER_H
