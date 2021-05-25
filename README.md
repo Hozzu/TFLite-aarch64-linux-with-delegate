@@ -18,4 +18,4 @@ For instruction, read README.md in each directory.
 
 It was tested on Qualcomm SA8195 platform which works on AGL (Automotive Grade Linux).
 
-![bench_tf2 5](https://user-images.githubusercontent.com/36912464/119297472-f87ca780-bc95-11eb-8f2a-0de1743e7d17.png)
+![bench_tf2 5](https://user-images.githubusercontent.com/36912464/119296554-2103a200-bc94-11eb-9f0f-f113aad0e21f.png)
