@@ -6,7 +6,7 @@ It is based on **tensorflow r2.5**.
 
 I also included GPU and hexagon delegate.
 GPU delegate requires OpenCL and OpenGL ES 2.0 libraries.
-Hexagon Delegate works only on Qualcomm DSP.
+Hexagon delegate works only on Qualcomm DSP.
 
 I wrote on guide.txt how to build tensorflow lite and deleage for aarch64 Linux.
 
