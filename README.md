@@ -18,3 +18,5 @@ Offboard version only contains tensorflow lite and delegate, assuming that use c
 For instruction, read README.md in each directory.
 
 It was tested on Qualcomm SA8195 platform which works on AGL (Automotive Grade Linux).
+
+![image](https://user-images.githubusercontent.com/28533445/141428765-0113020a-b45f-4076-ba02-c75a23fc48b7.png)
