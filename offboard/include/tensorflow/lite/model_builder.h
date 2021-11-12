@@ -22,6 +22,7 @@ limitations under the License.
 
 #include <stddef.h>
 
+#include <map>
 #include <memory>
 #include <string>
 
@@ -42,7 +43,11 @@ namespace tflite {
 ///
 /// NOTE: The current API requires that a FlatBufferModel instance be kept alive
 /// by the client as long as it is in use by any dependent Interpreter
-/// instances.
+/// instances. As the FlatBufferModel instance is effectively immutable after
+/// creation, the client may safely use a single model with multiple dependent
+/// Interpreter instances, even across multiple threads (though note that each
+/// Interpreter instance is *not* thread-safe).
+///
 /// <pre><code>
 /// using namespace tflite;
 /// StderrReporter error_reporter;
@@ -165,6 +170,10 @@ class FlatBufferModel {
   // in which case the actual required runtime might be greater than the
   // reported minimum.
   std::string GetMinimumRuntime() const;
+
+  // Return model metadata as a mapping of name & buffer strings.
+  // See Metadata table in TFLite schema.
+  std::map<std::string, std::string> ReadAllMetadata() const;
 
   /// Returns true if the model identifier is correct (otherwise false and
   /// reports an error).

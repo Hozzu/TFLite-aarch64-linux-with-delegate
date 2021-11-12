@@ -1,43 +1,17 @@
-All build guide is based on tensorflow r2.3-2.5 source code.
+All build guide is based on tensorflow r2.7 source code.
 
-1. Tensorflow Lite for aarch64 linux
-Build with following command:
-bazel build -c opt --config=elinux_aarch64 //tensorflow/lite:libtensorflowlite.so
+1. Tensorflow Lite for aarch64 linux with XNNPack delegate
+1) Build with bazel using following command
+bazel build -c opt --copt=-DCL_DELEGATE_NO_GL --config=elinux_aarch64 //tensorflow/lite:libtensorflowlite.so
 
 
 2. GPU delegate for aarch64 linux
-1) Modify all following lines in bazel build for gpu delegate (tensorflow/tensorflow/lite/delegates/gpu/BUILD, tensorflow/tensorflow/lite/delegates/gpu/cl/BUILD)
-"//tensorflow:android" --> "//tensorflow:linux_aarch64"
-
-2) Add egl and opengles library path to cross compiler (tensorflow/third_party/toolchains/embedded/arm-linux/cc_config.bzl.tpl)
-if (ctx.attr.cpu == "aarch64"):
-    default_link_flags_feature = feature(
-        name = "default_link_flags",
-        enabled = True,
-        flag_sets = [
-            flag_set(
-                actions = all_link_actions,
-                flag_groups = [
-                    flag_group(
-                        flags = [
-                            "-L/YOUR_PATH",
-                            "-lstdc++",
-                            "-Wl,-z,relro,-z,now",
-                            "-no-canonical-prefixes",
-                            "-pass-exit-codes",
-                            "-Wl,--build-id=md5",
-                            "-Wl,--hash-style=gnu",
-                        ],
-                    ),
-                ],
-                ),
-
-3) Build with following command:
-bazel build -c opt --config=elinux_aarch64 //tensorflow/lite/delegates/gpu:libtensorflowlite_gpu_delegate.so
+1) Build with bazel using following command
+bazel build -c opt --copt=-DCL_DELEGATE_NO_GL --config=elinux_aarch64 //tensorflow/lite/delegates/gpu:libtensorflowlite_gpu_delegate.so
 
 
-3. Hexagon delegate for aarch64 linux build command
-1) Add following lines into bazel build file for hexagon delegate (tensorflow/tensorflow/lite/delegates/hexagon/BUILD):
+3. Hexagon delegate for aarch64 linux
+1) Add following lines into bazel build for hexagon delegate to build shared library (tensorflow/tensorflow/lite/delegates/hexagon/BUILD)
 cc_binary(
     name = "libtensorflowlite_hexagon_delegate.so",
     linkopts = [
@@ -52,12 +26,47 @@ cc_binary(
     deps = [":hexagon_delegate"],
 )
 
-2) Build with following command:
+2) Build with bazel using following command
 bazel build -c opt --config=elinux_aarch64 //tensorflow/lite/delegates/hexagon:libtensorflowlite_hexagon_delegate.so
 
 3) Ask for hexagon-TFLite interface library(libhexagon_interface.so) for non-Android aarch64 linux on tensorflow github
 Source code is not disclosed because of license issue.
-It is Qualcomm's fault. Why they are refusing to disclose their hexagon compute API??
+Why Qualcomm is refusing to disclose their hexagon compute API?
 
 4) Qualcomm hexagon library can be downloaded on following site:
 https://www.tensorflow.org/lite/performance/hexagon_delegate
+
+
+4. NNAPI delegate for aarch64 linux (NOT TESTED)
+1) Add following lines into bazel build for nnapi delegate to build shared library (tensorflow/tensorflow/lite/delegates/nnapi/BUILD)
+cc_binary(
+    name = "libtensorflowlite_nnapi_delegate.so",
+    linkopts = [
+        "-Wl,-soname=libtensorflowlite_nnapi_delegate.so",
+    ],
+    linkshared = 1,
+    linkstatic = 1,
+    tags = [
+        "nobuilder",
+        "notap",
+    ],
+    deps = [":nnapi_delegate"],
+)
+
+2) Build with bazel using following command
+bazel build -c opt --config=elinux_aarch64 //tensorflow/lite/delegates/nnapi:libtensorflowlite_nnapi_delegate.so
+
+
+5. Tensorflow Lite benchmark for aarch64 linux with all delegates
+1) Set the hexagon library path in the benchmark code (tensorflow/lite/tools/delegates/hexagon_delegate_provider.cc)
+default_params_.AddParam("hexagon_lib_path",
+                             ToolParam::Create<std::string>(YOUR_PATH));
+                             
+2) Build with bazel using following command
+bazel build -c opt --copt=-DCL_DELEGATE_NO_GL --config=elinux_aarch64 //tensorflow/lite/tools/benchmark:benchmark_model
+
+
+6. Image label example for aarch64 linux with all delegates
+1) Build with bazel using following command
+bazel build -c opt --copt=-DCL_DELEGATE_NO_GL --config=elinux_aarch64 //tensorflow/lite/examples/label_image:label_image
+
