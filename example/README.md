@@ -1,4 +1,4 @@
-# Benchmark application
+# Benchmark
 
 For instruction, see help. (./benchmark_model --help)
 
