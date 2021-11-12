@@ -1,12 +1,13 @@
 # TFLite for Aarch64 Linux with Delegate
-Deep learning inference SW framework based on TensorFlow Lite with GPU and hexagon delegate for Aarch64 Linux
+Deep learning inference SW framework based on TensorFlow Lite with delegates for Aarch64 Linux
 
 In order to run Deep learning application on Aarch64 Linux system (non-Android), I built tensorflow lite for such system.
-It is based on **tensorflow r2.5**.
+It is based on **tensorflow r2.7**.
 
-I also included GPU and hexagon delegate.
-GPU delegate requires OpenCL and OpenGL ES 2.0 libraries.
-Hexagon delegate works only on Qualcomm DSP.
+I included XNNPACK, GPU, hexagon, and NNAPI delegate.
+GPU delegate requires OpenCL library.
+Hexagon delegate requires Qualcomm hexagon NN library.
+NNAPI requires NNAPI library and is not tested.
 
 I wrote on guide.txt how to build tensorflow lite and deleage for aarch64 Linux.
 
@@ -17,5 +18,3 @@ Offboard version only contains tensorflow lite and delegate, assuming that use c
 For instruction, read README.md in each directory.
 
 It was tested on Qualcomm SA8195 platform which works on AGL (Automotive Grade Linux).
-
-![bench_tf2 5](https://user-images.githubusercontent.com/36912464/119296554-2103a200-bc94-11eb-9f0f-f113aad0e21f.png)
