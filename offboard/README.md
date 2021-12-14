@@ -51,7 +51,7 @@ For tensorflow-lite: -ltensorflowlite
 For GPU delegate: -ltensorflowlite_gpu_delegate  
 For Hexagon delegate: -ltensorflowlite_hexagon_delegate  
 
-ex) In order to make with tensorflow-lite and GPU delegate, the compiler option should be "-ltensorflowlite -ltensorflowlite_gpu_delegate"  
+ex) In order to make with tensorflow-lite, GPU delegate and Hexagon delegate, the compiler option should be "-ltensorflowlite -ltensorflowlite_hexagon_delegate -ltensorflowlite_gpu_delegate"  
 
 
 ## 5. Move your app from x86 system to aarch64 linux board  
