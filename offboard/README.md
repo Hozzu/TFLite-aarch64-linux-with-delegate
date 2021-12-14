@@ -21,12 +21,7 @@ GPU delegate API:
   
 // Prepare GPU delegate.  
 auto* delegate = TfLiteGpuDelegateV2Create(/*default options=*/nullptr);  
-if (interpreter->ModifyGraphWithDelegate(delegate) != kTfLiteOk) return false;  
-
-// Run inference.  
-WriteToInputTensor(interpreter->typed_input_tensor<float>(0));  
-if (interpreter->Invoke() != kTfLiteOk) return false;  
-ReadFromOutputTensor(interpreter->typed_output_tensor<float>(0));  
+interpreter->ModifyGraphWithDelegate(delegate);  
 
 // Clean up.  
 TfLiteGpuDelegateV2Delete(delegate);  
@@ -43,8 +38,8 @@ TfLiteHexagonDelegateOptions params = {0};
 // 'delegate_ptr' Need to outlive the interpreter. For example,  
 // If use case will need to resize input or anything that can trigger  
 // re-applying delegates then 'delegate_ptr' need to outlive the interpreter.  
-auto* delegate_ptr = ::tflite::TfLiteHexagonDelegateCreate(&params);  
-Interpreter::TfLiteDelegatePtr delegate(delegate_ptr, [](TfLiteDelegate* delegate) { TfLiteHexagonDelegateDelete(delegate); });  
+auto* delegate_ptr = TfLiteHexagonDelegateCreate(&params);  
+TfLiteDelegatePtr delegate(delegate_ptr, [](TfLiteDelegate* delegate) { TfLiteHexagonDelegateDelete(delegate); });  
 interpreter->ModifyGraphWithDelegate(delegate.get());  
   
 // After usage of delegate.  
@@ -59,14 +54,14 @@ For Hexagon delegate: -ltensorflowlite_hexagon_delegate
 ex) In order to make with tensorflow-lite and GPU delegate, the compiler option should be "-ltensorflowlite -ltensorflowlite_gpu_delegate"  
 
 
-## 5. Move your app from x86 system to aarch64 linux board
+## 5. Move your app from x86 system to aarch64 linux board  
 
 
-## 6. Install tensorflow-lite and delegate libraries on aarch64 linux board
+## 6. Install tensorflow-lite and delegate libraries on aarch64 linux board  
 
-ex)
-cp ./lib/* /usr/lib/ 
+ex)  
+cp ./lib/* /usr/lib/  
 
 
-## 7. Run your app on board
+## 7. Run your app on board  
 
