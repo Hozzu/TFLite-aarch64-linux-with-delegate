@@ -16,14 +16,10 @@ Link of tensorflow-lite API:
 https://www.tensorflow.org/lite/api_docs/cc  
 
 GPU delegate API:  
-// Set up interpreter.  
-auto model = FlatBufferModel::BuildFromFile(model_path);  
-if (!model) return false;  
-ops::builtin::BuiltinOpResolver op_resolver;  
-std::unique_ptr<Interpreter> interpreter;  
-InterpreterBuilder(*model, op_resolver)(&interpreter);  
-
-// NEW: Prepare GPU delegate.  
+  
+#include <tensorflow/lite/delegates/gpu/delegate.h>  
+  
+// Prepare GPU delegate.  
 auto* delegate = TfLiteGpuDelegateV2Create(/*default options=*/nullptr);  
 if (interpreter->ModifyGraphWithDelegate(delegate) != kTfLiteOk) return false;  
 
@@ -32,47 +28,27 @@ WriteToInputTensor(interpreter->typed_input_tensor<float>(0));
 if (interpreter->Invoke() != kTfLiteOk) return false;  
 ReadFromOutputTensor(interpreter->typed_output_tensor<float>(0));  
 
-// NEW: Clean up.  
+// Clean up.  
 TfLiteGpuDelegateV2Delete(delegate);  
 
 Hexagon delegate API:  
-struct TfLiteHexagonDelegateOptions {  
-  // This corresponds to the debug level in the Hexagon SDK. 0 (default)  
-  // means no debug.  
-  int debug_level;  
-  // This corresponds to powersave_level in the Hexagon SDK.  
-  // where 0 (default) means high performance which means more power  
-  // consumption.  
-  int powersave_level;  
-  // If set to true, performance information about the graph will be dumped  
-  // to Standard output, this includes cpu cycles.  
-  // WARNING: Experimental and subject to change anytime.  
-  bool print_graph_profile;  
-  // If set to true, graph structure will be dumped to Standard output.  
-  // This is usually beneficial to see what actual nodes executed on  
-  // the DSP. Combining with 'debug_level' more information will be printed.  
-  // WARNING: Experimental and subject to change anytime.  
-  bool print_graph_debug;  
-};  
-
-// Return a delegate that uses Hexagon SDK for ops execution.  
-// Must outlive the interpreter.  
-TfLiteDelegate*  
-TfLiteHexagonDelegateCreate(const TfLiteHexagonDelegateOptions* options);  
-
-// Do any needed cleanup and delete 'delegate'.  
-void TfLiteHexagonDelegateDelete(TfLiteDelegate* delegate);  
-
-// Initializes the DSP connection.  
-// This should be called before doing any usage of the delegate.  
-// "lib_directory_path": Path to the directory which holds the  
-// shared libraries for the Hexagon NN libraries on the device.  
-// "/usr/lib/" is recommended.  
-void TfLiteHexagonInitWithPath(const char* lib_directory_path);  
-
-// Clean up and switch off the DSP connection.  
-// This should be called after all processing is done and delegate is deleted.  
-Void TfLiteHexagonTearDown();  
+  
+#include <tensorflow/lite/delegates/hexagon/hexagon_delegate.h>  
+  
+// Assuming shared libraries are under "/usr/lib"  
+const char[] library_directory_path = "/usr/lib";  
+TfLiteHexagonInitWithPath(library_directory_path);  // Needed once at startup.  
+TfLiteHexagonDelegateOptions params = {0};  
+  
+// 'delegate_ptr' Need to outlive the interpreter. For example,  
+// If use case will need to resize input or anything that can trigger  
+// re-applying delegates then 'delegate_ptr' need to outlive the interpreter.  
+auto* delegate_ptr = ::tflite::TfLiteHexagonDelegateCreate(&params);  
+Interpreter::TfLiteDelegatePtr delegate(delegate_ptr, [](TfLiteDelegate* delegate) { TfLiteHexagonDelegateDelete(delegate); });  
+interpreter->ModifyGraphWithDelegate(delegate.get());  
+  
+// After usage of delegate.  
+TfLiteHexagonTearDown();  // Needed once at end of app/DSP usage.  
 
 
 ## 4. Build your app using toolchain with following compiler option  
