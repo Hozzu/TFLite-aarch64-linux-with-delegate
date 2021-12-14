@@ -7,7 +7,6 @@ It is based on **tensorflow r2.7**.
 I included XNNPACK, GPU, hexagon, and NNAPI delegate.  
 GPU delegate requires OpenCL library.  
 Hexagon delegate requires Qualcomm hexagon NN library.  
-NNAPI requires NNAPI library and is not tested yet.  
 
 I wrote on guide.txt how to build tensorflow lite and deleage for aarch64 Linux. 
 
