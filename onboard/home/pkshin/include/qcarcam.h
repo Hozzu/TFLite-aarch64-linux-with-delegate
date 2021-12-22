@@ -21,8 +21,8 @@ extern "C" {
 //                   DEFINITIONS AND DECLARATIONS
 ///////////////////////////////////////////////////////////////////////////////
 #define QCARCAM_VERSION_MAJOR              4
-#define QCARCAM_VERSION_MINOR              5
-#define QCARCAM_VERSION_MINOR_COMPATIBLE   2
+#define QCARCAM_VERSION_MINOR              7
+#define QCARCAM_VERSION_MINOR_COMPATIBLE   7
 #define QCARCAM_VERSION                    ((QCARCAM_VERSION_MAJOR << 8) | QCARCAM_VERSION_MINOR)
 #define QCARCAM_VERSION_MINIMUM_COMPATIBLE ((QCARCAM_VERSION_MAJOR << 8) | QCARCAM_VERSION_MINOR_COMPATIBLE)
 

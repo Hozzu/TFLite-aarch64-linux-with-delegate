@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2017-2019, The Linux Foundation. All rights reserved.
+* Copyright (c) 2017 - 2020, The Linux Foundation. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are
@@ -40,6 +40,7 @@
 #include "xf86drmMode.h"
 #include <drm/msm_drm.h>
 #include <drm/msm_drm_pp.h>
+#include <drm/sde_drm.h>
 
 namespace sde_drm {
 
@@ -157,12 +158,6 @@ enum struct DRMOps {
    *      uint32_t - multirect mode
    */
   PLANE_SET_MULTIRECT_MODE,
-  /*
-   * Op: Sets sspp layout on this plane.
-   * Arg: uint32_t - Plane ID
-   *      uint32_t - SSPP Layout Index
-   */
-  PLANE_SET_SSPP_LAYOUT,
   /*
    * Op: Sets rotator output frame buffer ID for plane.
    * Arg: uint32_t - Plane ID
@@ -516,7 +511,6 @@ struct DRMCrtcInfo {
   bool concurrent_writeback = false;
   uint32_t num_mnocports = 0;
   uint32_t mnoc_bus_width = 0;
-  float vbif_cmd_ff = 0.0f;
   bool use_baselayer_for_stage = false;
   uint32_t vig_limit_index = 0;
   uint32_t dma_limit_index = 0;
@@ -524,6 +518,7 @@ struct DRMCrtcInfo {
   uint32_t rotation_limit_index = 0;
   uint32_t line_width_constraints_count = 0;
   std::vector< std::pair <uint32_t, uint32_t> > line_width_limits;
+  float vbif_cmd_ff = 0.0f;
 };
 
 enum struct DRMPlaneType {
@@ -568,10 +563,20 @@ struct DRMPlaneTypeInfo {
   bool block_sec_ui = false;
   // Allow all planes to be usable on all displays by default
   std::bitset<32> hw_block_mask = std::bitset<32>().set();
+  bool has_handoff = false;
 };
 
 // All DRM Planes as map<Plane_id , plane_type_info> listed from highest to lowest priority
 typedef std::vector<std::pair<uint32_t, DRMPlaneTypeInfo>>  DRMPlanesInfo;
+
+struct DRMPlaneStateInfo {
+  uint32_t plane_id = 0;
+  uint32_t crtc_id = 0;
+  uint32_t crtc_index = 0;
+  uint32_t possible_crtcs = 0;
+};
+
+typedef std::vector<DRMPlaneStateInfo> DRMPlanesStateInfo;
 
 enum struct DRMTopology {
   UNKNOWN,  // To be compat with driver defs in sde_rm.h
@@ -582,9 +587,13 @@ enum struct DRMTopology {
   DUAL_LM_MERGE,
   DUAL_LM_MERGE_DSC,
   DUAL_LM_DSCMERGE,
+  TRIPLE_LM,
+  TRIPLE_LM_DSC,
   QUAD_LM_MERGE,
   QUAD_LM_DSCMERGE,
   QUAD_LM_MERGE_DSC,
+  SIX_LM_MERGE,
+  SIX_LM_DSCMERGE,
   PPSPLIT,
 };
 
@@ -615,6 +624,7 @@ struct DRMConnectorInfo {
   uint32_t mmWidth;
   uint32_t mmHeight;
   uint32_t type;
+  uint32_t type_id;
   std::vector<DRMModeInfo> modes;
   std::string panel_name;
   DRMPanelMode panel_mode;
@@ -634,6 +644,7 @@ struct DRMConnectorInfo {
   bool is_wb_ubwc_supported;
   uint32_t topology_control;
   bool dyn_bitclk_support;
+  std::vector<uint8_t> edid;
 };
 
 // All DRM Connectors as map<Connector_id , connector_info>
@@ -653,6 +664,7 @@ struct DRMDisplayToken {
   uint32_t crtc_id;
   uint32_t crtc_index;
   uint32_t encoder_id;
+  uint8_t hw_port;
 };
 
 enum DRMPPFeatureID {
@@ -786,12 +798,6 @@ enum struct DRMMultiRectMode {
   SERIAL = 2,
 };
 
-enum struct DRMSSPPLayoutIndex {
-  NONE = 0,
-  LEFT = 1,
-  RIGHT = 2,
-};
-
 enum struct DRMCWbCaptureMode {
   MIXER_OUT = 0,
   DSPP_OUT = 1,
@@ -800,6 +806,7 @@ enum struct DRMCWbCaptureMode {
 enum struct DRMQsyncMode {
   NONE = 0,
   CONTINUOUS,
+  ONESHOT,
 };
 
 enum struct DRMTopologyControl {
@@ -950,12 +957,12 @@ class DRMManagerInterface {
    * [output]: DRMDisplayToken - CRTC and Connector id's for the display.
    * [return]: 0 on success, a negative error value otherwise.
    */
-  virtual int RegisterDisplay(int32_t display_id, DRMDisplayToken *tok) = 0;
+  virtual int RegisterDisplay(int32_t display_id, DRMDisplayToken *token) = 0;
 
   /* Client should invoke this interface on display disconnect.
    * [input]: DRMDisplayToken - identifier for the display.
    */
-  virtual void UnregisterDisplay(const DRMDisplayToken &token) = 0;
+  virtual void UnregisterDisplay(DRMDisplayToken *token) = 0;
 
   /*
    * Creates and returns an instance of DRMAtomicReqInterface corresponding to a display token
@@ -993,6 +1000,21 @@ class DRMManagerInterface {
    * [output]: Dpps feature version, info->version
    */
   virtual void GetDppsFeatureInfo(DRMDppsFeatureInfo *info) = 0;
+
+  /*
+   * GetPlanesStateInfo will provide planes' run-time state information.
+   * [input]: DRMPlanesStateInfo Info
+   * [input]: update If plane state need to be updated
+   * [output]: DRMPlanesStateInfo: Run-time state info for planes.
+   */
+  virtual void GetPlanesStateInfo(DRMPlanesStateInfo *info, bool update) = 0;
+
+  /*
+   * Handoff plane
+   * [input]: Plane id
+   * [return]: Error code if the API fails, 0 on success.
+   */
+  virtual int HandoffPlane(uint32_t plane_id) = 0;
 };
 
 }  // namespace sde_drm

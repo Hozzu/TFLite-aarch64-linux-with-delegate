@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2015 - 2018, The Linux Foundation. All rights reserved.
+* Copyright (c) 2015 - 2018, 2020, The Linux Foundation. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are permitted
 * provided that the following conditions are met:
@@ -27,11 +27,13 @@
 
 #include <core/sdm_types.h>
 #include <core/display_interface.h>
+#include <core/notifier_interface.h>
 
 #include "partial_update_interface.h"
 #include "strategy_interface.h"
 #include "resource_interface.h"
 #include "dpps_control_interface.h"
+#include "hw_info_interface.h"
 
 namespace sdm {
 
@@ -78,6 +80,12 @@ class ExtensionInterface {
   virtual DisplayError CreateDppsControlExtn(DppsControlInterface **dpps_control_interface,
                                              SocketHandler *socket_handler) = 0;
   virtual DisplayError DestroyDppsControlExtn(DppsControlInterface *interface) = 0;
+
+  virtual DisplayError CreateNotifierExtn(HWInfoInterface *hw_info_intf,
+                                          ResourceInterface *resource_intf,
+                                          Locker *comp_locker,
+                                          NotifierInterface **interface) = 0;
+  virtual DisplayError DestroyNotifierExtn(NotifierInterface *interface) = 0;
 
  protected:
   virtual ~ExtensionInterface() { }

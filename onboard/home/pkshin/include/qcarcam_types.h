@@ -22,7 +22,7 @@ extern "C" {
 /// @brief Maximum number of planes in buffer
 #define QCARCAM_MAX_NUM_PLANES 3
 
-#define QCARCAM_MAX_NUM_BUFFERS 12
+#define QCARCAM_MAX_NUM_BUFFERS 20
 
 #define QCARCAM_INPUT_NAME_LEN 80
 #define QCARCAM_MAX_NUM_RESOLUTIONS 10
@@ -34,6 +34,9 @@ extern "C" {
 #define QCARCAM_HDR_NUM_EXPOSURES 4
 
 #define QCARCAM_MAX_GAMMA_TABLE 128
+
+#define QCARCAM_MAX_PAYLOAD_SIZE 64
+#define QCARCAM_MAX_VENDOR_PAYLOAD_SIZE QCARCAM_MAX_PAYLOAD_SIZE
 
 ///////////////////////////////////////////////////////////////////////////////
 // Constant and Macros
@@ -88,7 +91,6 @@ typedef enum
     QCARCAM_INPUT_TYPE_TUNER         = 11,
     QCARCAM_INPUT_TYPE_TESTPATTERN   = 255,
     QCARCAM_INPUT_TYPE_USER_DEFINED_START= 256,  ///< User defined IDs may start at this index
-    QCARCAM_INPUT_NUM,                           /// total number of valid parameters
     QCARCAM_INPUT_MAX = 0x7FFFFFFF
 } qcarcam_input_desc_t;
 
@@ -167,13 +169,47 @@ typedef enum
     QCARCAM_FMT_MAX = 0x7FFFFFFF
 } qcarcam_color_fmt_t;
 
+///////////////////////////////////////////////////////////////////////////////
+/// Expected p_value type for qcarcam_g_param/qcarcam_s_param
+///
+///        PARAMETER                      |       TYPE               |    NOTE
+/// -----------------------------------------------------------------------------
+/// QCARCAM_PARAM_EVENT_CB                |  ptr_value               | event callback function
+/// QCARCAM_PARAM_EVENT_MASK              |  uint_value              | bitmask of qcarcam_event_t
+/// QCARCAM_PARAM_COLOR_FMT               |  color_value             |
+/// QCARCAM_PARAM_RESOLUTION              |  res_value               |
+/// QCARCAM_PARAM_BRIGHTNESS              |  uint_value              |
+/// QCARCAM_PARAM_CONTRAST                |  uint_value              |
+/// QCARCAM_PARAM_MIRROR_H                |  uint_value              | 1 to enable
+/// QCARCAM_PARAM_MIRROR_V                |  uint_value              | 1 to enable
+/// QCARCAM_PARAM_FRAME_RATE              |  uint_value              |
+/// QCARCAM_PARAM_VID_STD                 |  uint_value              |
+/// QCARCAM_PARAM_CURRENT_VID_STD         |  uint_value              |
+/// QCARCAM_PARAM_STATUS                  |  -                       |
+/// QCARCAM_PARAM_LATENCY_MAX             |  uint_value              |
+/// QCARCAM_PARAM_LATENCY_REDUCE_RATE     |  uint_value              |
+/// QCARCAM_PARAM_PRIVATE_DATA            |  ptr_value               |
+/// QCARCAM_PARAM_INJECTION_START         |  uint_value              |
+/// QCARCAM_PARAM_EXPOSURE                |  exposure_config         |
+/// QCARCAM_PARAM_HUE                     |  float_value             |
+/// QCARCAM_PARAM_SATURATION              |  float_value             |
+/// QCARCAM_PARAM_HDR_EXPOSURE            |  hdr_exposure_config     |
+/// QCARCAM_PARAM_GAMMA                   |  gamma_config            |
+/// QCARCAM_PARAM_OPMODE                  |  uint_value              | qcarcam_opmode_type
+/// QCARCAM_PARAM_ISP_CTRLS               |  isp_ctrls               |
+/// QCARCAM_PARAM_VENDOR                  |  vendor_param            |
+/// QCARCAM_PARAM_INPUT_MODE              |  Input device mode       |
+/// QCARCAM_PARAM_MASTER                  |  boolean                 | 1 to set and 0 to release
+/// QCARCAM_PARAM_EVENT_CHANGE_SUBSCRIBE  |  uint_value              | Bitmask of qcarcam_param_t
+/// QCARCAM_PARAM_EVENT_CHANGE_UNSUBSCRIBE|  uint_value              | Bitmask of qcarcam_param_t
+
 /// @brief Parameter settings
 typedef enum
 {
     QCARCAM_PARAM_EVENT_CB = 0x1,       ///< Event callback function.
-    QCARCAM_PARAM_EVENT_MASK,
+    QCARCAM_PARAM_EVENT_MASK,           ///< Mask of events
     QCARCAM_PARAM_COLOR_FMT,            ///< Output color format.
-    QCARCAM_PARAM_RESOLUTION,           ///< Output resolution.
+    QCARCAM_PARAM_RESOLUTION,           ///< Input dev resolution.
     QCARCAM_PARAM_BRIGHTNESS,
     QCARCAM_PARAM_CONTRAST,
     QCARCAM_PARAM_MIRROR_H,             ///< Horizontal mirror.
@@ -181,9 +217,9 @@ typedef enum
     QCARCAM_PARAM_FRAME_RATE,
     QCARCAM_PARAM_VID_STD,              ///< Video standard
     QCARCAM_PARAM_CURRENT_VID_STD,      ///< Video standard
-    QCARCAM_PARAM_STATUS,
-    QCARCAM_PARAM_LATENCY_MAX,
-    QCARCAM_PARAM_LATENCY_REDUCE_RATE,
+    QCARCAM_PARAM_STATUS,               ///< Video lock status
+    QCARCAM_PARAM_LATENCY_MAX,          ///< Max buffer latency in frame done Q
+    QCARCAM_PARAM_LATENCY_REDUCE_RATE,  ///< Number of buffers to drop when max latency reached
     QCARCAM_PARAM_PRIVATE_DATA,
     QCARCAM_PARAM_INJECTION_START,
     QCARCAM_PARAM_EXPOSURE,             ///< exposure setting
@@ -193,7 +229,12 @@ typedef enum
     QCARCAM_PARAM_GAMMA,                ///< gamma setting
     QCARCAM_PARAM_OPMODE,               ///< operation mode
     QCARCAM_PARAM_ISP_CTRLS,            ///< ISP controls
-    QCARCAM_PARAM_NUM, /// total number of valid parameters.
+    QCARCAM_PARAM_VENDOR,               ///< vendor param
+    QCARCAM_PARAM_INPUT_MODE,           ///< Input device mode.
+    QCARCAM_PARAM_MASTER,               ///< Set the client as master
+    QCARCAM_PARAM_EVENT_CHANGE_SUBSCRIBE,      ///< Event subscription
+    QCARCAM_PARAM_EVENT_CHANGE_UNSUBSCRIBE,    ///< Event unsubscribe
+    QCARCAM_PARAM_NUM,                  ///< total number of valid parameters.
 
     QCARCAM_PARAM_MAX = 0x7FFFFFFF
 } qcarcam_param_t;
@@ -213,11 +254,13 @@ typedef enum  {
     QCARCAM_EXPOSURE_LUX_IDX
 } qcarcam_exposure_mode_t;
 
+/// @brief Gamma parameter type
 typedef enum  {
-    QCARCAM_GAMMA_EXPONENT,            /// set gamma value in a float
-    QCARCAM_GAMMA_KNEEPOINTS,       /// set a array of gamma parameters
+    QCARCAM_GAMMA_EXPONENT,         /// set gamma value in a float
+    QCARCAM_GAMMA_KNEEPOINTS,       /// set array of gamma values
 } qcarcam_gamma_type_t;
 
+/// @brief Frame drop modes
 typedef enum  {
     QCARCAM_KEEP_ALL_FRAMES,    ///< Max fps
     QCARCAM_KEEP_EVERY_2FRAMES, ///< 1/2 Max fps
@@ -227,15 +270,19 @@ typedef enum  {
     QCARCAM_FRAMEDROP_MANUAL    /// Set period/pattern manually
 } qcarcam_frame_drop_mode_t;
 
+/// @brief Input operation modes
 typedef enum {
     QCARCAM_OPMODE_RAW_DUMP,
     QCARCAM_OPMODE_SHDR,
     QCARCAM_OPMODE_INJECT,
     QCARCAM_OPMODE_PAIRED_INPUT,
+    QCARCAM_OPMODE_DEINTERLACE,
+    QCARCAM_OPMODE_TRANSFORMER,
+
     QCARCAM_OPMODE_MAX
 } qcarcam_opmode_type;
 
-/// @brief Initialization paramaters
+/// @brief Initialization parameters
 typedef struct
 {
     unsigned int flags;
@@ -249,10 +296,23 @@ typedef struct
 {
     unsigned int width;
     unsigned int height;
-    float fps; ///< Input frame rate per second, maximal and default value
+    float fps;
 } qcarcam_res_t;
 
-/// @brief Input sources
+/// @brief Input Mode
+typedef struct {
+    qcarcam_color_fmt_t fmt;
+    qcarcam_res_t res;
+} qcarcam_mode_t;
+
+/// @brief Input description flags
+typedef enum
+{
+    QCARCAM_INPUT_FLAG_CONTENT_PROTECTED = 1 << 0,  ///< Content protection enabled
+    QCARCAM_INPUT_FLAG_PAIRED            = 1 << 1   ///< Paired input stream
+} qcarcam_input_flag_t;
+
+/// @brief Input description
 typedef struct
 {
     qcarcam_input_desc_t desc;            ///< Unique input identifier
@@ -266,7 +326,7 @@ typedef struct
     qcarcam_color_fmt_t color_fmt[QCARCAM_MAX_NUM_COLOR_FMTS]; ///< Array of supported color formats
     unsigned int num_color_fmt;                                ///< Number of supported color formats
 
-    unsigned int flags;
+    unsigned int flags; ///< bitmask of qcarcam_input_flag_t
 } qcarcam_input_t;
 
 /// @brief Buffer plane definition
@@ -286,6 +346,14 @@ typedef struct
     unsigned int n_planes;
 } qcarcam_buffer_t;
 
+/// @brief Buffer flag bits
+typedef enum
+{
+    QCARCAM_BUFFER_FLAG_SECURE  = 1 << 0,   ///< buffer is secured
+    QCARCAM_BUFFER_FLAG_CACHE   = 1 << 1,   ///< buffer is cached
+    QCARCAM_BUFFER_FLAG_OS_HNDL = 1 << 4,   ///< buffer pointer refers to an OS memory handle
+} qcarcam_buffer_flag_t;
+
 /// @brief Set buffer definition
 typedef struct
 {
@@ -294,7 +362,7 @@ typedef struct
     qcarcam_buffer_t* buffers; ///< Array of buffers
     unsigned int n_buffers;    ///< Number of buffers in list
 
-    unsigned int flags;
+    unsigned int flags; ///< bitmask of qcarcam_buffer_flag_t
 } qcarcam_buffers_t;
 
 /// @brief Frame done payload
@@ -309,12 +377,21 @@ typedef struct
     qcarcam_field_t field_type;
 } qcarcam_frame_info_t;
 
+/// @brief structure to hold vendor param
+typedef struct
+{
+    unsigned int data[QCARCAM_MAX_VENDOR_PAYLOAD_SIZE];
+}qcarcam_vendor_param_t;
+
+
 /// @brief Event type definition
 typedef enum
 {
     QCARCAM_EVENT_FRAME_READY = 1 << 0,  ///< Frame ready to be dequeued using get_frame API
     QCARCAM_EVENT_INPUT_SIGNAL = 1 << 1, ///< Payload will contain qcarcam_input_signal_t
-    QCARCAM_EVENT_ERROR = 1 << 2         ///< Error event
+    QCARCAM_EVENT_ERROR = 1 << 2,        ///< Error event
+    QCARCAM_EVENT_VENDOR = 1 << 3,       ///< Vendor event
+    QCARCAM_PROPERTY_NOTIFY = 1<< 4,     ///< Property events
 } qcarcam_event_t;
 
 /// @brief Input Event payload definition
@@ -329,13 +406,24 @@ typedef enum
 {
     QCARCAM_FATAL_ERROR = 0,
     QCARCAM_CONN_ERROR,
-    QCARCAM_IFE_OVERFLOW_ERROR
+    QCARCAM_IFE_OVERFLOW_ERROR,
+    QCARCAM_FRAMESYNC_ERROR
 } qcarcam_event_error_t;
 
+///////////////////////////////////////////////////////////////////////////////
 /// @brief Union to hold possible values to p_payload in qcarcam_event_cb_t
+///
+///        EVENT ID                      |       TYPE               |    NOTE
+/// ---------------------------------------------------------------------------
+/// QCARCAM_EVENT_FRAME_READY            |                          | no payload
+/// QCARCAM_EVENT_INPUT_SIGNAL           | uint_payload             | flags
+/// QCARCAM_EVENT_VENDOR                 | uint array               |
+///
+///////////////////////////////////////////////////////////////////////////////
 typedef union
 {
     unsigned int uint_payload; ///< unsigned int type
+    unsigned int array[QCARCAM_MAX_PAYLOAD_SIZE]; ///< vendor event payload
 } qcarcam_event_payload_t;
 
 /// @brief structure to hold manual exposure parameters
@@ -393,6 +481,7 @@ typedef enum
     QCARCAM_CONTROL_MODE,
     QCARCAM_CONTROL_SCENE_MODE,
     QCARCAM_CONTROL_AE_ANTIBANDING_MODE,
+    QCARCAM_CONTROL_DUMP_FRAME,
 
     QCARCAM_ISP_PARAM_NUM /// total number of valid parameters.
 }qcarcam_isp_param_t;
@@ -508,42 +597,11 @@ typedef union
     qcarcam_hdr_exposure_config_t hdr_exposure_config; ///< HDR Exposure settings
     qcarcam_gamma_config_t gamma_config;             ///< Gamma settings
     qcarcam_frame_rate_t frame_rate_config;          ///< Frame rate settings
-    int arr_padding[32];                             ///< Used to ensure union size won't change
     qcarcam_param_isp_ctrls_t isp_ctrls;             ///< Used to control isp sensor settings
+    qcarcam_vendor_param_t vendor_param;             ///< vendor param
+    unsigned long long uint64_value;                 ///< unsigned uint64 value
+    int arr_padding[QCARCAM_MAX_PAYLOAD_SIZE];       ///< Used to ensure union size won't change
 }qcarcam_param_value_t;
-
-///////////////////////////////////////////////////////////////////////////////
-/// Expected p_value type for qcarcam_g_param/qcarcam_s_param
-///
-///        PARAMETER                      |       TYPE               |    NOTE
-/// -----------------------------------------------------------------------------
-/// QCARCAM_PARAM_EVENT_CB                |  ptr_value               | event callback function
-/// QCARCAM_PARAM_EVENT_MASK              |  uint_value              | bitmask of qcarcam_event_t
-/// QCARCAM_PARAM_COLOR_FMT               |  color_value             |
-/// QCARCAM_PARAM_RESOLUTION              |  res_value               |
-/// QCARCAM_PARAM_BRIGHTNESS              |  uint_value              |
-/// QCARCAM_PARAM_CONTRAST                |  uint_value              |
-/// QCARCAM_PARAM_MIRROR_H                |  uint_value              | 1 to enable
-/// QCARCAM_PARAM_MIRROR_V                |  uint_value              | 1 to enable
-/// QCARCAM_PARAM_FRAME_RATE              |  uint_value              |
-/// QCARCAM_PARAM_VID_STD                 |  uint_value              |
-/// QCARCAM_PARAM_CURRENT_VID_STD         |  uint_value              |
-/// QCARCAM_PARAM_LATENCY_MAX             |  uint_value              |
-/// QCARCAM_PARAM_LATENCY_REDUCE_RATE     |  uint_value              |
-/// QCARCAM_PARAM_EXPOSURE                |  exposure_config         |
-/// QCARCAM_PARAM_HDR_EXPOSURE            |  hdr_exposure_config     |
-/// QCARCAM_PARAM_OPMODE                  |  uint_value              | qcarcam_opmode_type
-
-
-///////////////////////////////////////////////////////////////////////////////
-/// Expected payload type for qcarcam_event_cb_t
-///
-///        EVENT ID                      |       TYPE               |    NOTE
-/// ---------------------------------------------------------------------------
-/// QCARCAM_EVENT_FRAME_READY            | none                     |
-/// QCARCAM_EVENT_INPUT_SIGNAL           | uint_payload             | flags
-///
-///////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief Event callback function definition
@@ -551,6 +609,7 @@ typedef union
 /// @param hndl       Handle of input that was opened
 /// @param event_id   Event ID
 /// @param p_payload  Payload particular to that event. Refer to table above for payload type.
+///////////////////////////////////////////////////////////////////////////////
 typedef void (*qcarcam_event_cb_t) (qcarcam_hndl_t hndl, qcarcam_event_t event_id, qcarcam_event_payload_t* p_payload);
 
 #ifdef __cplusplus

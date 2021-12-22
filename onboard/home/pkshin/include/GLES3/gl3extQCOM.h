@@ -1,5 +1,5 @@
 //******************************************************************************************************************************
-// Copyright (c) 2009-2016, 2019 Qualcomm Technologies, Inc.
+// Copyright (c) 2009-2016, 2019-2020 Qualcomm Technologies, Inc.
 // All Rights Reserved.
 // Confidential and Proprietary - Qualcomm Technologies, Inc.
 //******************************************************************************************************************************
@@ -638,6 +638,18 @@ typedef void (GL_APIENTRYP PFNLPERSISTENTWORKLOADSUBMITQCOMPROC) (GLboolean wait
 GL_APICALL void GL_APIENTRY glPersistentWorkloadSubmitQCOM (GLboolean waitForCompletion);
 #endif
 #endif /* GL_QCOM_persistent_workload */
+
+#ifndef GL_QCOM_motion_estimation
+#define GL_QCOM_motion_estimation 1
+#define GL_MOTION_ESTIMATION_SEARCH_BLOCK_X_QCOM 0x8C90
+#define GL_MOTION_ESTIMATION_SEARCH_BLOCK_Y_QCOM 0x8C91
+typedef void (GL_APIENTRYP PFNGLTEXESTIMATEMOTIONQCOMPROC) (GLuint ref, GLuint target, GLuint output);
+typedef void (GL_APIENTRYP PFNGLTEXESTIMATEMOTIONREGIONSQCOMPROC) (GLuint ref, GLuint target, GLuint output, GLuint mask);
+#ifdef GL_GLEXT_PROTOTYPES
+GL_APICALL void GL_APIENTRY glTexEstimateMotionQCOM(GLuint ref, GLuint target, GLuint output);
+GL_APICALL void GL_APIENTRY glTexEstimateMotionRegionsQCOM(GLuint ref, GLuint target, GLuint output, GLuint mask);
+#endif
+#endif /* GL_QCOM_motion_estimation */
 
 #ifdef __cplusplus
 }

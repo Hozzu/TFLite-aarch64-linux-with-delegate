@@ -38,6 +38,7 @@
 #include <utility>
 #include <unordered_map>
 #include <memory>
+#include <bitset>
 
 #include "layer_buffer.h"
 #include "sdm_types.h"
@@ -129,6 +130,16 @@ enum LayerComposition {
                             //!< stack.
 };
 
+enum LayerUpdate {
+  kSecurity,
+  kMetadataUpdate,
+  kSurfaceDamage,
+  kSurfaceInvalidate,
+  kClientCompRequest,
+  kLayerUpdateMax,
+};
+
+
 /*! @brief This structure defines rotation and flip values for a display layer.
 
   @sa Layer
@@ -196,10 +207,8 @@ struct LayerRequestFlags {
       uint32_t flip_buffer: 1;  //!< This flag will be set by SDM when the layer needs FBT flip
       uint32_t dest_tone_map : 1;  //!< This flag will be set by SDM when the layer needs
                                    //!< destination tone map
-      uint32_t src_3d_tone_map: 1;  //!< This flag will be set by SDM when the layer needs
-                                    //!< 3d tonemap
-      uint32_t src_1d_tone_map: 1;  //!< This flag will be set by SDM when the layer needs
-                                    //!< 1d tone map
+      uint32_t src_tone_map: 1;    //!< This flag will be set by SDM when the layer needs
+                                   //!< source tone map.
     };
     uint32_t request_flags = 0;  //!< For initialization purpose only.
                                  //!< Shall not be refered directly.
@@ -262,6 +271,10 @@ struct LayerStackFlags {
                                            // This applies only to primary displays currently
 
       uint32_t hdr_present : 1;  //!< Set if stack has HDR content
+
+      uint32_t fast_path : 1;    //!< Preference for fast/slow path draw-cycle, set by client.
+
+      uint32_t config_changed : 1;  //!< This flag indicates Display config must be validated.
 
       uint32_t mask_present : 1;  //!< Set if layer stack has mask layers.
     };
@@ -392,6 +405,7 @@ struct Layer {
                                                    //!< needed on this layer.
   LayerSolidFill solid_fill_info = {};             //!< solid fill info along with depth.
   std::shared_ptr<LayerBufferMap> buffer_map = nullptr;  //!< Map of handle_id and fb_id.
+  std::bitset<kLayerUpdateMax> update_mask = 0;
 };
 
 /*! @brief This structure defines the color space + transfer of a given layer.
@@ -435,9 +449,6 @@ struct LayerStack {
 
 
   PrimariesTransfer blend_cs = {};     //!< o/p - Blending color space of the frame, updated by SDM
-
-  bool block_on_fb = true;             //!< Indicates if there is a need to block
-                                       //!< on GPU composed o/p.
 };
 
 }  // namespace sdm

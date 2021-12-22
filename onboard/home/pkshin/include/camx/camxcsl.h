@@ -128,6 +128,7 @@ typedef enum
     CSLCameraTitanSocSDM712   = 393,   ///< SDM712 SOC Id
     CSLCameraTitanSocSA8195P  = 405,   ///< SA8195P SOC Id
     CSLCameraTitanSocSM6250   = 407,   ///< SM6250 SOC Id
+    CSLCameraTitanSocSM7125   = 443,   ///< SM6250AB SOC Id
 } CSLCameraFamilySoc;
 
 /// @brief Camera Titan family Information
@@ -264,12 +265,15 @@ typedef struct
 /// @brief CSL error message types. Error messages are used to communicate errors for asynchronous events.
 typedef enum
 {
-    CSLErrorMessageCodeDevice,  ///< A device has generated an error. Device errors are considered fatal to the camera session.
-    CSLErrorMessageCodeRequest, ///< An error occurred for a single request. Request errors are not fatal. Pending and future
-                                ///  request should be expected to be successfully processed.
-    CSLErrorMessageCodeBuffer,  ///< A buffer was not filled. Other buffers associated with the request may have been
-                                ///  successfully processed. Buffer errors are not fatal.
-    CSLErrorMessageCodeRecovery ///< Recovery event from KMd
+    CSLErrorMessageCodeDevice,       ///< A device has generated an error. Device errors are considered fatal to the
+                                     ///  camera session.
+    CSLErrorMessageCodeRequest,      ///< An error occurred for a single request. Request errors are not fatal.
+                                     ///  Pending and future request should be expected to be successfully processed.
+    CSLErrorMessageCodeBuffer,       ///< A buffer was not filled. Other buffers associated with the request may have been
+                                     ///  successfully processed. Buffer errors are not fatal.
+    CSLErrorMessageCodeRecovery,     ///< Recovery event from KMd excluding sensor
+    CSLErrorMessageCodeFullRecovery  ///< Full Recovery event from KMd. Need to recover the complete system including sensor
+                                     ///  and phy.
 } CSLErrorMessageCode;
 
 /// @brief CSL error message payload. Defines the parameters of the CSL error message.

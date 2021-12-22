@@ -1,6 +1,7 @@
 // * This makes emacs happy -*-Mode: C++;-*-
 /****************************************************************************
- * Copyright (c) 1998-2014,2019 Free Software Foundation, Inc.              *
+ * Copyright 2019,2020 Thomas E. Dickey                                     *
+ * Copyright 1998-2012,2014 Free Software Foundation, Inc.                  *
  *                                                                          *
  * Permission is hereby granted, free of charge, to any person obtaining a  *
  * copy of this software and associated documentation files (the            *
@@ -31,7 +32,7 @@
  *   Author: Juergen Pfeifer, 1997                                          *
  ****************************************************************************/
 
-// $Id: cursesm.h,v 1.31 2019/07/28 19:55:27 tom Exp $
+// $Id: cursesm.h,v 1.33 2020/02/02 23:34:34 tom Exp $
 
 #ifndef NCURSES_CURSESM_H_incl
 #define NCURSES_CURSESM_H_incl 1
@@ -358,7 +359,7 @@ public:
     flag ? OnError (::post_menu(menu)) : OnError (::unpost_menu (menu));
   }
 
-  // Get the numer of rows and columns for this menu
+  // Get the number of rows and columns for this menu
   inline void scale (int& mrows, int& mcols) const  {
     OnError (::scale_menu (menu, &mrows, &mcols));
   }

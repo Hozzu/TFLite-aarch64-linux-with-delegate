@@ -2,7 +2,7 @@
 #define __eglextQCOM_h__
 
 /*=============================================================================
- Copyright (c) 2009-2016, 2019 Qualcomm Technologies, Inc.
+ Copyright (c) 2009-2016, 2019-2020 Qualcomm Technologies, Inc.
  All Rights Reserved.
  Confidential and Proprietary - Qualcomm Technologies, Inc.
 =============================================================================*/
@@ -126,17 +126,17 @@ EGLAPI EGLBoolean EGLAPIENTRY eglQueryImageQCOM ( EGLDisplay dpy, EGLImageKHR im
 #endif /* EGL_EGLEXT_PROTOTYPES */
 typedef EGLBoolean (EGLAPIENTRYP PFNEGLQUERYIMAGEQCOMPROC) ( EGLDisplay dpy, EGLImageKHR image, EGLint attribute, EGLint* value );
 
-#define EGL_IMAGE_EXT_BUFFER_BASE_ADDR_LOW_QCOM         0x3480
-#define EGL_IMAGE_EXT_BUFFER_BASE_ADDR_HIGH_QCOM        0x3481
-#define EGL_IMAGE_EXT_BUFFER_SIZE_QCOM                  0x3482
-#define EGL_IMAGE_EXT_BUFFER_STRIDE_QCOM                0x3483
-#define EGL_IMAGE_EXT_BUFFER_PLANE0_OFFSET_QCOM         0x3484
-#define EGL_IMAGE_EXT_BUFFER_PLANE1_OFFSET_QCOM         0x3485
-#define EGL_IMAGE_EXT_BUFFER_PLANE2_OFFSET_QCOM         0x3486
-#define EGL_IMAGE_EXT_BUFFER_MEMORY_TYPE_QCOM           0x3487
-#define EGL_IMAGE_EXT_BUFFER_MEMORY_TYPE_UNKNOWN_QCOM   0x34a0 /* External memory type cannot be determined */
-#define EGL_IMAGE_EXT_BUFFER_MEMORY_TYPE_PMEM_QCOM      0x34a1 /* External memory is allocated from PMEM on INTEGRITY or QNX */
-#define EGL_IMAGE_EXT_BUFFER_MEMORY_TYPE_ION_QCOM       0x34a2 /* External memory is allocated from ION on linux */
+#define EGL_IMAGE_EXT_BUFFER_BASE_ADDR_LOW_QCOM         0x341A
+#define EGL_IMAGE_EXT_BUFFER_BASE_ADDR_HIGH_QCOM        0x341B
+#define EGL_IMAGE_EXT_BUFFER_SIZE_QCOM                  0x341C
+#define EGL_IMAGE_EXT_BUFFER_STRIDE_QCOM                0x341D
+#define EGL_IMAGE_EXT_BUFFER_PLANE0_OFFSET_QCOM         0x341E
+#define EGL_IMAGE_EXT_BUFFER_PLANE1_OFFSET_QCOM         0x341F
+#define EGL_IMAGE_EXT_BUFFER_PLANE2_OFFSET_QCOM         0x3423
+#define EGL_IMAGE_EXT_BUFFER_MEMORY_TYPE_QCOM           0x3424
+#define EGL_IMAGE_EXT_BUFFER_MEMORY_TYPE_UNKNOWN_QCOM   0x3425 /* External memory type cannot be determined */
+#define EGL_IMAGE_EXT_BUFFER_MEMORY_TYPE_PMEM_QCOM      0x3426 /* External memory is allocated from PMEM on INTEGRITY or QNX */
+#define EGL_IMAGE_EXT_BUFFER_MEMORY_TYPE_ION_QCOM       0x3427 /* External memory is allocated from ION on linux */
 #endif /* EGL_QCOM_create_image */
 
 

@@ -40,10 +40,10 @@ extern "C" {
 # include <sys/mount.h>
 #endif
 
-#define LIBMOUNT_VERSION   "2.34.0"
+#define LIBMOUNT_VERSION   "2.35.1"
 #define LIBMOUNT_MAJOR_VERSION   2
-#define LIBMOUNT_MINOR_VERSION   34
-#define LIBMOUNT_PATCH_VERSION   0
+#define LIBMOUNT_MINOR_VERSION   35
+#define LIBMOUNT_PATCH_VERSION   1
 
 /**
  * libmnt_cache:
@@ -705,6 +705,7 @@ extern void mnt_free_context(struct libmnt_context *cxt);
 extern int mnt_reset_context(struct libmnt_context *cxt);
 extern int mnt_context_is_restricted(struct libmnt_context *cxt)
 			__ul_attribute__((nonnull));
+extern int mnt_context_force_unrestricted(struct libmnt_context *cxt);
 
 extern int mnt_context_init_helper(struct libmnt_context *cxt,
 				   int action, int flags);
@@ -772,10 +773,12 @@ extern struct libmnt_fs *mnt_context_get_fs(struct libmnt_context *cxt);
 extern int mnt_context_set_source(struct libmnt_context *cxt, const char *source);
 extern int mnt_context_set_target(struct libmnt_context *cxt, const char *target);
 extern int mnt_context_set_fstype(struct libmnt_context *cxt, const char *fstype);
+extern int mnt_context_set_target_prefix(struct libmnt_context *cxt, const char *path);
 
 extern const char *mnt_context_get_source(struct libmnt_context *cxt);
 extern const char *mnt_context_get_target(struct libmnt_context *cxt);
 extern const char *mnt_context_get_fstype(struct libmnt_context *cxt);
+extern const char *mnt_context_get_target_prefix(struct libmnt_context *cxt);
 
 extern void *mnt_context_get_mtab_userdata(struct libmnt_context *cxt);
 extern void *mnt_context_get_fstab_userdata(struct libmnt_context *cxt);
@@ -902,6 +905,13 @@ extern int mnt_context_set_syscall_status(struct libmnt_context *cxt, int status
 #define MNT_MS_SIZELIMIT (1 << 15)
 #define MNT_MS_ENCRYPTION (1 << 16)
 #define MNT_MS_XFSTABCOMM (1 << 17)
+#define MNT_MS_HASH_DEVICE (1 << 18)
+#define MNT_MS_ROOT_HASH (1 << 19)
+#define MNT_MS_HASH_OFFSET (1 << 20)
+#define MNT_MS_ROOT_HASH_FILE (1 << 21)
+#define MNT_MS_FEC_DEVICE (1 << 22)
+#define MNT_MS_FEC_OFFSET (1 << 23)
+#define MNT_MS_FEC_ROOTS (1 << 24)
 
 /*
  * mount(2) MS_* masks (MNT_MAP_LINUX map)

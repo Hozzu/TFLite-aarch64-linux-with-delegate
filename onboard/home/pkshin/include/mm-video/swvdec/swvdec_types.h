@@ -2,7 +2,7 @@
  * @file      swvdec_types.h
  * @brief     SwVdec framework data type definitions.
  * @copyright
- *            Copyright (c) 2015-2019 Qualcomm Technologies, Inc.
+ *            Copyright (c) 2015-2020 Qualcomm Technologies, Inc.
  *            All Rights Reserved.
  *            Confidential and Proprietary - Qualcomm Technologies, Inc.
  */
@@ -25,7 +25,7 @@ extern "C" {
 
 /// SwVdec version date
 #define SWVDEC_VERSION_DATE "2017-12-21@13:47:54"
-#define VC1_DSP_LIBS_LABEL "VIDEO_CODECS_SW_1.13"
+#define VC1_DSP_LIBS_LABEL "VIDEO_CODECS_SW_1.15"
 
 /// error code enumeration
 typedef enum {

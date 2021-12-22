@@ -122,6 +122,7 @@ void CamxLogAssert(unsigned int assertType,
 // NOWHINE CP049: We're defining CAMX_STATIC_ASSERT here
 #define CAMX_STATIC_ASSERT_MESSAGE(condition, message)   static_assert(condition, message)
 
+#if (CAMX_ASSERTS_ENABLED)
 #define CAMX_ASSERT(condition) do                                                                  \
                                {                                                                   \
                                    if (!(condition))                                               \
@@ -130,6 +131,13 @@ void CamxLogAssert(unsigned int assertType,
                                    }                                                               \
                                } while ((void)0, 0)                                                \
 
+#else
+
+#define CAMX_ASSERT(condition) void(0);
+
+#endif
+
+#if (CAMX_ASSERTS_ENABLED)
 #define CAMX_ASSERT_MESSAGE(condition, fmt, ...) do                                                \
                                                  {                                                 \
                                                      if (!(condition))                             \
@@ -139,6 +147,11 @@ void CamxLogAssert(unsigned int assertType,
                                                       }                                            \
                                                  } while ((void)0, 0)                              \
 
+#else
+
+#define CAMX_ASSERT_MESSAGE(condition, fmt, ...) void(0);
+
+#endif
 
 #define CAMX_ASSERT_ALWAYS()                    CAMX_ASSERT_EX(CamxAssertAlways,          "ALWAYS")
 #define CAMX_ASSERT_ALWAYS_MESSAGE(fmt, ...)    CAMX_ASSERT_EX(CamxAssertAlways,          fmt, ##__VA_ARGS__)

@@ -357,14 +357,15 @@ enum Camera3MessageType
 ///        Additional information can be found there.
 enum Camera3ErrorMessageCode
 {
-    MessageCodeDevice   = 1,    ///< A serious failure occurred and no further frames will be produced by the device
-    MessageCodeRequest  = 2,    ///< An error has occurred in processing a request and no output will be produced for this
-                                ///  request.
-    MessageCodeResult   = 3,    ///< An error has occurred in producing an output result metadata buffer for a request, but
-                                ///  output stream buffers for it will still be available.
-    MessageCodeBuffer   = 4,    ///< An error has occurred in placing an output buffer into a stream for a request. The frame
-                                ///  metadata and other buffers may still be available.
-    MessageCodeRecovery = 5     ///< Recovery event from KMD
+    MessageCodeDevice       = 1,  ///< A serious failure occurred and no further frames will be produced by the device
+    MessageCodeRequest      = 2,  ///< An error has occurred in processing a request and no output will be produced for this
+                                  ///  request.
+    MessageCodeResult       = 3,  ///< An error has occurred in producing an output result metadata buffer for a request, but
+                                  ///  output stream buffers for it will still be available.
+    MessageCodeBuffer       = 4,  ///< An error has occurred in placing an output buffer into a stream for a request. The frame
+                                  ///  metadata and other buffers may still be available.
+    MessageCodeRecovery     = 5,  ///< Recovery event from KMD
+    MessageCodeFullRecovery = 6   ///< Recovery event from KMD. Need complete recovery including sensor release.
 };
 
 /// @brief Camera3 Hal Stream param for override pixel format and usage flags

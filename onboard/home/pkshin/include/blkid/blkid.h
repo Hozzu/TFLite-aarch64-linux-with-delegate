@@ -30,8 +30,8 @@
 extern "C" {
 #endif
 
-#define BLKID_VERSION   "2.34.0"
-#define BLKID_DATE      "14-Jun-2019"
+#define BLKID_VERSION   "2.35.1"
+#define BLKID_DATE      "31-Jan-2020"
 
 /**
  * blkid_dev:
@@ -137,8 +137,10 @@ typedef struct blkid_struct_dev_iterate *blkid_dev_iterate;
 # endif
 #endif
 
-/* cache.c */
+/* init.c */
 extern void blkid_init_debug(int mask);
+
+/* cache.c */
 extern void blkid_put_cache(blkid_cache cache);
 extern int blkid_get_cache(blkid_cache *cache, const char *filename);
 extern void blkid_gc_cache(blkid_cache cache);

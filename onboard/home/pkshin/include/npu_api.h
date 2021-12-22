@@ -23,7 +23,7 @@
  ========================================================================*/
 
 #define MAJOR_NPU_DRIVER_VER        2   // 16 bit
-#define MINOR_NPU_DRIVER_VER        13  // 8  bit
+#define MINOR_NPU_DRIVER_VER        19  // 8  bit
 #define PATCH_NPU_DRIVER_VER        0   // 8  bit
 
 #define NPU_DRIVER_VERSION  ((MAJOR_NPU_DRIVER_VER << 16) | \
@@ -53,10 +53,24 @@
 
 // for returned for npu property: NPU_SYS_NNC_CAPS
 #define NPU_PROP_ONLINE_COMPILER         0x00000001
+#define NPU_PROP_LEGACY_COMPILER         0x00000002
 
 // for returned for npu property: NPU_SYS_BLOB_ID
 #define NPU_LEGACY_BLOB_ID         0x00000001
 #define NPU_ONLINE_BLOB_ID         0x00000002
+
+#define MAX_RESIZE_DIMS             4
+
+
+#define NPU_NETWORK_PRIORITY_MASK            0x000000FF
+#define NPU_NETWORK_LAYER_PREEMPT_MASK       0x00FF0000
+#define NPU_NETWORK_LAYER_PREEMPT_SHIFT      16
+
+#define NPU_NETWORK_PRIORITY_NORMAL_MIN       0      // Normal priority minimum level - 0
+#define NPU_NETWORK_PRIORITY_NORMAL_MAX       0x7F   // Normal priority maximum level - 127
+
+#define NPU_NETWORK_PRIORITY_RT_MIN           0x80   // Real time priority minimum level - 128
+#define NPU_NETWORK_PRIORITY_RT_MAX           0xFF   // Real time priority maximum level - 255
 
 /*========================================================================
  Flags
@@ -86,6 +100,9 @@
 */
 #define NPU_ALLOC_FLAGS_PRE_FILLED_DESCRIPTOR 0x00000001
 
+#define NPU_MAX_FW_CAPS 8
+
+
 /*========================================================================
  Data Types
  ========================================================================*/
@@ -102,13 +119,13 @@ typedef struct _npu_info_t
 
 typedef enum _quantize_type_t
 {
-    NPU_QUANTIZE_TYPE_NONE = 0,
-    NPU_QUANTIZE_TYPE_TF8,
-    NPU_QUANTIZE_TYPE_QMN8,
-    NPU_QUANTIZE_TYPE_QMN16,
-    NPU_QUANTIZE_TYPE_FLOAT,
-    NPU_QUANTIZE_TYPE_TF32,
-    NPU_QUANTIZE_TYPE_TF16,
+    NPU_QUANTIZE_TYPE_NONE  = 0,
+    NPU_QUANTIZE_TYPE_TF8   = 1,
+    NPU_QUANTIZE_TYPE_QMN8  = 2,
+    NPU_QUANTIZE_TYPE_QMN16 = 3,
+    NPU_QUANTIZE_TYPE_FLOAT = 4,
+    NPU_QUANTIZE_TYPE_TF32  = 5,
+    NPU_QUANTIZE_TYPE_TF16  = 6,
     NPU_QUANTIZE_TYPE_NUM,
     NPU_QUANTIZE_TYPE_FORCE_32BIT = 0x7FFFFFFF
 } quantize_type_t;
@@ -121,34 +138,34 @@ typedef enum _npu_pixel_format_t
     /// The RGB format consists of 3 bytes per pixel: one byte for
     /// Red, one for Green and one for Blue. The byte ordering is
     /// endian independent and is always RGB byte order.
-    NPU_PIXEL_FORMAT_RGB,
+    NPU_PIXEL_FORMAT_RGB    = 1,
 
     /// The ARGB32 format consists of 4 bytes per pixel: one byte for
     /// Red, one for Green, one for Blue and one for the alpha channel.
     /// The alpha channel is ignored.
-    NPU_PIXEL_FORMAT_ARGB32,
+    NPU_PIXEL_FORMAT_ARGB32 = 2,
 
     /// The RGBA format consists of 4 bytes per pixel: one byte for
     /// Red, one for Green, one for Blue and one for the alpha channel.
     /// The alpha channel is ignored.
-    NPU_PIXEL_FORMAT_RGBA,
+    NPU_PIXEL_FORMAT_RGBA   = 3,
 
     /// NV21 is the Android version of YUV. The Chrominance is down
     /// sampled and has a sub sampling ratio of 4:2:0. Note that this
     /// image format has 3 channels, but the U and V channels
     /// are subsampled. For every four Y pixels there is one U and one V pixel.
-    NPU_PIXEL_FORMAT_NV21,
+    NPU_PIXEL_FORMAT_NV21    = 4,
 
     /// The BGR format consists of 3 bytes per pixel: one byte for Blue,
     /// one for Green and one for Red.
-    NPU_PIXEL_FORMAT_BGR,
+    NPU_PIXEL_FORMAT_BGR     = 5,
 
     // NPU native
-    NPU_PIXEL_FORMAT_B_G_R_PLANAR,
+    NPU_PIXEL_FORMAT_B_G_R_PLANAR = 6,
 
     // NPU network specific format
     // used for split networks or intermediate data mainly
-    NPU_PIXEL_FORMAT_NETWORK,
+    NPU_PIXEL_FORMAT_NETWORK  = 7,
 
     NPU_PIXEL_FORMAT_FORCE_32BIT = 0x7FFFFFFF,
 } npu_pixel_format_t;
@@ -167,10 +184,10 @@ typedef struct _quantize_cfg_t
 
 typedef enum _npu_dim_type_t
 {
-    NPU_DIM_X,
-    NPU_DIM_Y,
-    NPU_DIM_Z,      //Ni
-    NPU_DIM_Batch,
+    NPU_DIM_X     = 0,
+    NPU_DIM_Y     = 1,
+    NPU_DIM_Z     = 2,      //Ni
+    NPU_DIM_Batch = 3,
     NPU_DIM_Max = 0x7FFFFFFF
 } npu_dim_type_t;
 
@@ -301,37 +318,38 @@ typedef struct _npu_buffer_v2_t
 
 typedef enum _npu_layer_type_t
 {
-    NPU_LAYER_NULL = 0,
-    NPU_LAYER_INPUT,
-    NPU_LAYER_ACTIVATION,
-    NPU_LAYER_BATCH_NORM,
-    NPU_LAYER_CONCAT,
-    NPU_LAYER_CONVOLUTION,
-    NPU_LAYER_DECONVOLUTION,
-    NPU_LAYER_DROPOUT,
-    NPU_LAYER_FC,
-    NPU_LAYER_LRN,
-    NPU_LAYER_POOLING,
-    NPU_LAYER_PRELU,
-    NPU_LAYER_SOFTMAX,
-    NPU_LAYER_CROP,
-    NPU_LAYER_ELEMENTWISEOP,
-    NPU_LAYER_SUBTRACTMEAN,
-    NPU_LAYER_RESIZE,
-    NPU_LAYER_SLICE,
+    NPU_LAYER_NULL          = 0,
+    NPU_LAYER_INPUT         = 1,
+    NPU_LAYER_ACTIVATION    = 2,
+    NPU_LAYER_BATCH_NORM    = 3,
+    NPU_LAYER_CONCAT        = 4,
+    NPU_LAYER_CONVOLUTION   = 5,
+    NPU_LAYER_DECONVOLUTION = 6,
+    NPU_LAYER_DROPOUT       = 7,
+    NPU_LAYER_FC            = 8,
+    NPU_LAYER_LRN           = 9,
+    NPU_LAYER_POOLING       = 10,
+    NPU_LAYER_PRELU         = 11,
+    NPU_LAYER_SOFTMAX       = 12,
+    NPU_LAYER_CROP          = 13,
+    NPU_LAYER_ELEMENTWISEOP = 14,
+    NPU_LAYER_SUBTRACTMEAN  = 15,
+    NPU_LAYER_RESIZE        = 16,
+    NPU_LAYER_SLICE         = 17,
+    NPU_LAYER_CONST         = 18,
     NPU_LAYER_MAX,
-    NPU_LAYER_FORCE_32BIT = 0x7FFFFFFF  // Ensure this enum takes 32 bits.
+    NPU_LAYER_FORCE_32BIT   = 0x7FFFFFFF  // Ensure this enum takes 32 bits.
 } npu_layer_type_t;
 
 typedef enum _npu_perf_mode_t
 {
     NPU_MODE_DEFAULT = 0,
-    NPU_MODE_1,
-    NPU_MODE_2,
-    NPU_MODE_3,
-    NPU_MODE_4,
-    NPU_MODE_5,
-    NPU_MODE_6,
+    NPU_MODE_1       = 1,
+    NPU_MODE_2       = 2,
+    NPU_MODE_3       = 3,
+    NPU_MODE_4       = 4,
+    NPU_MODE_5       = 5,
+    NPU_MODE_6       = 6,
     NPU_MODE_MAX,
     NPU_MODE_FORCE_32BIT = 0x7FFFFFFF,
 } npu_perf_mode_t;
@@ -339,10 +357,10 @@ typedef enum _npu_perf_mode_t
 typedef enum _npu_dcvs_mode_t
 {
     NPU_DCVS_MODE_OFF = 0,
-    NPU_DCVS_MODE_1,
-    NPU_DCVS_MODE_2,
-    NPU_DCVS_MODE_3,
-    NPU_DCVS_MODE_4,
+    NPU_DCVS_MODE_1   = 1,
+    NPU_DCVS_MODE_2   = 2,
+    NPU_DCVS_MODE_3   = 3,
+    NPU_DCVS_MODE_4   = 4,
     NPU_DCVS_MODE_MAX,
     NPU_DCVS_MODE_FORCE_32BIT = 0x7FFFFFFF,
 } npu_dcvs_mode_t;
@@ -360,11 +378,34 @@ typedef enum _npu_property_mode_t
     NPU_SYS_HW_VERSION =      8,
     NPU_SYS_FW_VERSION =      9,
     NPU_SYS_DRV_VERSION =     10,
-    NPU_NET_BLOB_ID =         11,            // Deprecated - currently has the same NPU_SYS_BLOB_ID value for backward compatibility
+    NPU_NET_BLOB_ID =         11, // Deprecated - currently has the same NPU_SYS_BLOB_ID value for backward compatibility
     NPU_SYS_BLOB_ID =         11,
     NPU_SYS_NNC_CAPS =        12,
+    NPU_SYS_NNC_VERSION =     13,
+    NPU_SYS_FW_CAPS =         14, // FW capabilites. Use npu_sys_prop_fwcaps_t
+    NPU_SYS_DRV_CAPS =        15, // Driver capabilites Use npu_sys_prop_t
+    NPU_SYS_PROP_NUM,
     NPU_PROP_MODE_FORCE_32BIT = 0x7FFFFFFF,  // Ensure this enum takes 32 bits.
 } npu_property_mode_t;
+
+// Property structures
+typedef struct _npu_sys_prop_t
+{
+    uint32_t param;
+} npu_sys_prop_t;
+
+typedef struct _npu_net_prop_t
+{
+    npu_network_handle_t hNetwork;
+    uint32_t param;
+} npu_net_prop_t;
+
+// use for prop ID: NPU_SYS_FW_CAPS
+typedef struct _npu_sys_prop_fwcaps_t
+{
+    uint32_t caps[NPU_MAX_FW_CAPS];     // bit encoded caps
+    uint32_t flags;                     // reserved for future use
+} npu_sys_prop_fwcaps_t;
 
 
 // Convolution
@@ -410,6 +451,11 @@ typedef struct _de_conv_layer_parms_t {
     npu_buffer_t                weights;
     npu_buffer_t                biases;
 } de_conv_layer_parms_t;
+
+// Const layer
+typedef struct _const_layer_parms_t {
+    npu_buffer_t                data;
+} const_layer_parms_t;
 
 typedef struct _softmax_layer_parms_t {
     int32_t depth;
@@ -528,6 +574,24 @@ typedef struct _static_min_max_t
     float         min;
 } static_min_max_t;
 
+typedef struct _npu_resize_param_t
+{
+    // input dimensions
+    uint32_t inputDims[MAX_RESIZE_DIMS];
+
+    // original blob information (this is the non-serialized blob)
+    void     *pBlobData;          // original blob data pointer
+    uint32_t  blobSize;           // original blob size
+
+    // resized blob allocated by npu_resize_network_init and released by npu_resize_network_deinit
+    void     *pResizedBlobData;  // pointer to new memory containing resized blob.
+                                 // Note: the memory for this data is allocated within the driver
+                                 // and needs to be freed by caller. It can be freed once npu_load_network()
+                                 // is completed
+    uint32_t resizedBlobSize;    // new resized blob size
+    uint32_t flags;              // flags for internal functionality
+} npu_resize_param_t;
+
 typedef struct _npu_layer_common_t
 {
     /// @@brief For int m_Id in FxpLayer
@@ -573,6 +637,7 @@ typedef struct _npu_layer_descriptor_t
         subtract_mean_layer_parms_t subtractMeanParms;
         resize_layer_parms_t        resizeParms;
         slice_layer_parms_t         sliceLayerOpParms;
+        const_layer_parms_t         constParms;
     } params;
 } npu_layer_descriptor_t;
 
@@ -588,6 +653,19 @@ typedef struct _npu_load_network_param_t
     npu_layer_descriptor_t *pLayerDesc;
 
     npu_perf_mode_t perfMode;
+
+    // Priority field indicates the network's prioritization in relation to other networks. Its a bit encoded field described as follows:
+    // Bits 0-7 indicate priority.
+    //    Setting in the range NPU_NETWORK_PRIORITY_NORMAL_MIN - NPU_NETWORK_PRIORITY_NORMAL_MAX (0-127) indicates normal service priority. These
+    //    networks will be preempted when a network with higher priority (128-255) needs to execute.
+    //    Setting in the range of NPU_NETWORK_PRIORITY_RT_MIN - NPU_NETWORK_PRIORITY_RT_MAX (128-255) indicate real-time service priority. The networks will be prioritized and executed as soon as possible
+    //    and will execute before networks with normal priority.
+    //
+    //    Real-time networks will only preempt normal priority networks, not other real-time ones.
+    //    All priorities within each range 0-127 and 128-255 are currently treated equally.
+    // Bits 8-15: Reserved for future use
+    // Bits 16-23: indicate at which layer number multiple the network is preemptable at.
+    //    Setting to 0 (default) will indicate the network is preemptable on a per layer basis. (Only applicable to networks with priority 0-127 currently)
     uint32_t priority;
     uint32_t flags;
 } npu_load_network_param_t;
@@ -685,18 +763,6 @@ typedef struct _npu_alloc_param_v2_t
     uint32_t flags;                    // If flags set NPU_ALLOC_FLAGS_PRE_FILLED_DESCRIPTOR,
                                        // this uses the pre-filled descriptor for size
 } npu_alloc_param_v2_t;
-
-typedef struct _npu_sys_prop_t
-{
-    uint32_t param;
-} npu_sys_prop_t;
-
-typedef struct _npu_net_prop_t
-{
-    npu_network_handle_t hNetwork;
-    uint32_t param;
-} npu_net_prop_t;
-
 
 typedef struct _npu_translate_stats_t
 {
@@ -997,14 +1063,33 @@ npu_sts_t npu_get_serialize_network_size(npu_network_handle_t hNetwork, uint32_t
 npu_sts_t npu_serialize_network(npu_load_network_param_t *pLoadNetworkParam, npu_network_handle_t hNetwork, void *pBuff, uint32_t size);
 
 /*!
-\fn npu_sts_t npu_deserialize_network_hdr
-\brief  Check validity of serialize network data header.
+\fn npu_sts_t npu_validate_serialized_network_hdr
+\brief  Check validity of serialized network header.
 \ Caller should call this function before npu_load_network_v2 to know what blob to be used.
-\ param[in] pBuff - pointer to the buffer to be filled with serialized data
+\ param[in] pSerBuff - pointer to the buffer to be filled with serialized data
+\ param[in] pBlob -    pointer to the buffer to be filled current blob data
 \   Other notes:
 \retval 0     Successful operation.
 \retval non-0 Unsuccessful.
 */
-npu_sts_t npu_deserialize_network_hdr(void *pBuff);
+npu_sts_t npu_validate_serialized_network_hdr(void *pSerBuff, void *pBlob);
+
+/*!
+\fn npu_sts_t npu_resize_network_init
+\brief Allocate resources and Resize a given network.
+\param[in|out] pResizeParams - Pointer to the resize parameters
+\retval 0     Successful operation.
+\retval non-0 Unsuccessful.
+*/
+npu_sts_t npu_resize_network_init(npu_resize_param_t *pResizeParams);
+
+/*!
+\fn npu_sts_t npu_resize_network_deinit
+\brief Release allocated by npu_resize_network_init resouces.
+\param[in|out] pResizeParams - Pointer to the resize parameters
+\retval 0     Successful operation.
+\retval non-0 Unsuccessful.
+*/
+npu_sts_t npu_resize_network_deinit(npu_resize_param_t *pResizeParams);
 
 #endif // NPU_API_H

@@ -35,11 +35,11 @@ extern "C" {
  *
  * Library version string
  */
-#define LIBFDISK_VERSION   "2.34.0"
+#define LIBFDISK_VERSION   "2.35.1"
 
 #define LIBFDISK_MAJOR_VERSION   2
-#define LIBFDISK_MINOR_VERSION   34
-#define LIBFDISK_PATCH_VERSION   0
+#define LIBFDISK_MINOR_VERSION   35
+#define LIBFDISK_PATCH_VERSION   1
 
 /**
  * fdisk_context:
@@ -195,6 +195,8 @@ int fdisk_is_labeltype(struct fdisk_context *cxt, enum fdisk_labeltype id);
 
 int fdisk_assign_device(struct fdisk_context *cxt,
 			const char *fname, int readonly);
+int fdisk_assign_device_by_fd(struct fdisk_context *cxt, int fd,
+                        const char *fname, int readonly);
 int fdisk_deassign_device(struct fdisk_context *cxt, int nosync);
 int fdisk_reassign_device(struct fdisk_context *cxt);
 
@@ -757,6 +759,7 @@ void fdisk_unref_script(struct fdisk_script *dp);
 const char *fdisk_script_get_header(struct fdisk_script *dp, const char *name);
 int fdisk_script_set_header(struct fdisk_script *dp, const char *name, const char *data);
 struct fdisk_table *fdisk_script_get_table(struct fdisk_script *dp);
+int fdisk_script_set_table(struct fdisk_script *dp, struct fdisk_table *tb);
 int fdisk_script_get_nlines(struct fdisk_script *dp);
 int fdisk_script_has_force_label(struct fdisk_script *dp);
 

@@ -66,7 +66,7 @@ typedef   int32_t rpc_inline_t;
 #define mem_free(ptr, bsize)	free(ptr)
 
 
-#if defined __APPLE_CC__ || defined __FreeBSD__ || !defined(__GLIBC__)
+#if defined __APPLE_CC__ || defined __FreeBSD__ || !defined (__GLIBC__)
 # define __u_char_defined
 # define __daddr_t_defined
 #endif

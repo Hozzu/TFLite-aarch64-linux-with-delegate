@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2014 - 2019, The Linux Foundation. All rights reserved.
+* Copyright (c) 2014 - 2020, The Linux Foundation. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are permitted
 * provided that the following conditions are met:
@@ -158,9 +158,10 @@ enum SecureEvent {
 
 /*! @brief This enum represents the QSync modes supported by the hardware. */
 enum QSyncMode {
-  kQSyncModeNone,        // This is set by the client to disable qsync
-  kQSyncModeContinuous,  // This is set by the client to enable qsync forever
-  kQsyncModeOneShot,     // This is set by client to enable qsync only for current frame.
+  kQSyncModeNone,               // This is set by the client to disable qsync
+  kQSyncModeContinuous,         // This is set by the client to enable qsync forever
+  kQsyncModeOneShot,            // This is set by client to enable qsync only for current frame.
+  kQsyncModeOneShotContinuous,  // This is set by client to enable qsync only for every commit.
 };
 
 /*! @brief This structure defines configuration for display dpps ad4 region of interest. */
@@ -535,13 +536,13 @@ class DisplayInterface {
   */
   virtual bool IsUnderscanSupported() = 0;
 
-  /*! @brief Method to set brightness of the primary display.
+  /*! @brief Method to set brightness of the builtin display.
 
-    @param[in] level the new backlight level.
+    @param[in] brightness the new backlight level 0.0f(min) to 1.0f(max) where -1.0f represents off.
 
     @return \link DisplayError \endlink
   */
-  virtual DisplayError SetPanelBrightness(int level) = 0;
+  virtual DisplayError SetPanelBrightness(float brightness) = 0;
 
   /*! @brief Method to notify display about change in min HDCP encryption level.
 
@@ -633,12 +634,6 @@ class DisplayInterface {
   */
   virtual DisplayError GetDefaultColorMode(std::string *color_mode) = 0;
 
-  /*! @brief Method to request applying default display mode.
-
-    @return \link DisplayError \endlink
-  */
-  virtual DisplayError ApplyDefaultDisplayMode() = 0;
-
   /*! @brief Method to set the position of the hw cursor.
 
     @param[in] x \link x position \endlink
@@ -650,11 +645,11 @@ class DisplayInterface {
 
   /*! @brief Method to get the brightness level of the display
 
-    @param[out] level brightness level
+    @param[out] brightness brightness percentage
 
     @return \link DisplayError \endlink
   */
-  virtual DisplayError GetPanelBrightness(int *level) = 0;
+  virtual DisplayError GetPanelBrightness(float *brightness) = 0;
 
   /*! @brief Method to set layer mixer resolution.
 
@@ -839,6 +834,26 @@ class DisplayInterface {
       @return \link DisplayError \endlink
   */
   virtual DisplayError GetSupportedDSIClock(std::vector<uint64_t> *bitclk_rates) = 0;
+
+  /*! @brief Method to retrieve the EDID information and HW port ID for display
+
+    @param[out] HW port ID
+    @param[out] size of EDID blob data
+    @param[out] EDID blob
+
+    @return \link DisplayError \endlink
+  */
+  virtual DisplayError GetDisplayIdentificationData(uint8_t *out_port, uint32_t *out_data_size,
+                                                    uint8_t *out_data) = 0;
+
+  /*! @brief Method to set min/max luminance for dynamic tonemapping of external device over WFD.
+
+    @param[in] min_lum min luminance supported by external device.
+    @param[in] max_lum max luminance supported by external device.
+
+    @return \link DisplayError \endlink
+  */
+  virtual DisplayError SetPanelLuminanceAttributes(float min_lum, float max_lum) = 0;
 
   /*! @brief Method to query if there is a need to validate.
 

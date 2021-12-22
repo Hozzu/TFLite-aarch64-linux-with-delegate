@@ -1,5 +1,5 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2016-2019 Qualcomm Technologies, Inc.
+// Copyright (c) 2016-2020 Qualcomm Technologies, Inc.
 // All Rights Reserved.
 // Confidential and Proprietary - Qualcomm Technologies, Inc.
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -60,6 +60,7 @@ enum class Format
     FDYUV420NV12,    ///< YUV 420 format as described by the NV12 fourcc FD.
     P010,            ///< P010 format.
     RawPlain64,      ///< RawPlain64 format
+    UBWCP010,        ///< UBWC TP10 format (as per UBWC2.0 design specification)
     ARGB = 25,       ///< ARGB format, each pixel occupies 4 or 8 bytes.
                      ///< ARGB8888 and ARGB2101010 are 4 bytes, ARGB16161616 are 8 bytes.
     YUV422YUYV       ///< YUV 422 format as YUYV pattern

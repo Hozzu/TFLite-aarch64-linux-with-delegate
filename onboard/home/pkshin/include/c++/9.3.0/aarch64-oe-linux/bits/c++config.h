@@ -918,7 +918,7 @@ namespace std
 #define _GLIBCXX_HAVE_INTTYPES_H 1
 
 /* Define to 1 if you have the `isinf' function. */
-#define _GLIBCXX_HAVE_ISINF 1
+/* #undef _GLIBCXX_HAVE_ISINF */
 
 /* Define to 1 if you have the `isinff' function. */
 #define _GLIBCXX_HAVE_ISINFF 1
@@ -927,7 +927,7 @@ namespace std
 #define _GLIBCXX_HAVE_ISINFL 1
 
 /* Define to 1 if you have the `isnan' function. */
-#define _GLIBCXX_HAVE_ISNAN 1
+/* #undef _GLIBCXX_HAVE_ISNAN */
 
 /* Define to 1 if you have the `isnanf' function. */
 #define _GLIBCXX_HAVE_ISNANF 1
@@ -1008,7 +1008,7 @@ namespace std
 #define _GLIBCXX_HAVE_MEMORY_H 1
 
 /* Define to 1 if you have the `modf' function. */
-/* #undef _GLIBCXX_HAVE_MODF */
+#define _GLIBCXX_HAVE_MODF 1
 
 /* Define to 1 if you have the `modff' function. */
 #define _GLIBCXX_HAVE_MODFF 1
@@ -1107,7 +1107,7 @@ namespace std
 #define _GLIBCXX_HAVE_STDLIB_H 1
 
 /* Define if strerror_l is available in <string.h>. */
-#define _GLIBCXX_HAVE_STRERROR_L 1
+/* #undef _GLIBCXX_HAVE_STRERROR_L */
 
 /* Define if strerror_r is available in <string.h>. */
 #define _GLIBCXX_HAVE_STRERROR_R 1
@@ -1128,7 +1128,7 @@ namespace std
 #define _GLIBCXX_HAVE_STRUCT_DIRENT_D_TYPE 1
 
 /* Define if strxfrm_l is available in <string.h>. */
-#define _GLIBCXX_HAVE_STRXFRM_L 1
+/* #undef _GLIBCXX_HAVE_STRXFRM_L */
 
 /* Define if symlink is available in <unistd.h>. */
 #define _GLIBCXX_HAVE_SYMLINK 1
@@ -1509,7 +1509,7 @@ namespace std
 /* Define if C99 functions in <complex.h> should be used in <complex> for
    C++11. Using compiler builtins for these functions requires corresponding
    C99 library functions to be present. */
-/* #undef _GLIBCXX11_USE_C99_COMPLEX */
+#define _GLIBCXX11_USE_C99_COMPLEX 1
 
 /* Define if C99 functions or macros in <math.h> should be imported in <cmath>
    in namespace std for C++11. */

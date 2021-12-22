@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2015-2019, The Linux Foundation. All rights reserved.
+* Copyright (c) 2015-2020, The Linux Foundation. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are permitted
 * provided that the following conditions are met:
@@ -128,6 +128,7 @@ enum HWPipeFlags {
 };
 
 enum HWAVRModes {
+  kQsyncNone,       // Disables Qsync.
   kContinuousMode,  // Mode to enable AVR feature for every frame.
   kOneShotMode,     // Mode to enable AVR feature for particular frame.
 };
@@ -141,16 +142,22 @@ enum HWTopology {
   kDualLMMerge,
   kDualLMMergeDSC,
   kDualLMDSCMerge,
+  kTripleLM,
+  kTripleLMDSC,
   kQuadLMMerge,
   kQuadLMDSCMerge,
   kQuadLMMergeDSC,
+  kSixLMMerge,
+  kSixLMDSCMerge,
   kPPSplit,
 };
 
 enum HWMixerSplit {
   kNoSplit,
   kDualSplit,
+  kTripleSplit,
   kQuadSplit,
+  kSixSplit,
 };
 
 enum HwHdrEotf {
@@ -162,6 +169,7 @@ enum HwHdrEotf {
 };
 
 enum HWSrcTonemap {
+  kSrcTonemapNone,
   kSrcTonemap1d,  // DMA
   kSrcTonemap3d,  // VIG
 };
@@ -184,6 +192,16 @@ enum class HWRecoveryEvent : uint32_t {
   kSuccess,            // driver succeeded recovery
   kCapture,            // driver PP_TIMEOUT, capture logs
   kDisplayPowerReset,  // driver requesting display power cycle
+};
+
+enum SDMVersion {
+  kVersionSDM855V1 = SDEVERSION(5, 0, 0),
+  kVersionSDM855V2 = SDEVERSION(5, 0, 1),
+  kVersionSM6150V1 = SDEVERSION(5, 3, 0),
+  kVersionSM7150V1 = SDEVERSION(5, 2, 0),
+  kVersionSM8250V1 = SDEVERSION(6, 0, 0),
+  kVersionSM7250V1 = SDEVERSION(6, 1, 0),
+  kVersionSM6250V1 = SDEVERSION(6, 2, 0),
 };
 
 typedef std::map<HWSubBlockType, std::vector<LayerBufferFormat>> FormatsMap;
@@ -217,9 +235,18 @@ struct HWPipeCaps {
   uint32_t dgm_csc_version = 0;
   std::map<HWToneMapLut, uint32_t> tm_lut_version_map = {};
   bool block_sec_ui = false;
+  bool support_handoff = false;
   // Allow all pipelines to be usable on all displays by default
   std::bitset<32> hw_block_mask = std::bitset<32>().set();
 };
+
+struct HWPipeStateInfo {
+  uint32_t id = 0;
+  int32_t hw_block_id = -1;
+  std::bitset<32> hw_block_mask = std::bitset<32>().set();
+};
+
+typedef std::vector<HWPipeStateInfo> HWPipesStateInfo;
 
 struct HWRotatorInfo {
   enum { ROT_TYPE_MDSS, ROT_TYPE_V4L2 };
@@ -330,11 +357,11 @@ struct HWResourceInfo {
   int secure_disp_blend_stage = -1;
   uint32_t num_mnocports = 2;
   uint32_t mnoc_bus_width = 32;
-  float vbif_cmd_ff = 0.0f;
   bool use_baselayer_for_stage = false;
   uint32_t line_width_constraints_count = 0;
   vector< pair <uint32_t, uint32_t> > line_width_limits;
   vector< pair <uint32_t, uint32_t> > line_width_constraints;
+  float vbif_cmd_ff = 0.0f;
 };
 
 struct HWSplitInfo {
@@ -393,7 +420,8 @@ struct HWPanelInfo {
   HWSplitInfo split_info;             // Panel split configuration
   char panel_name[256] = {0};         // Panel name
   HWS3DMode s3d_mode = kS3DModeNone;  // Panel's current s3d mode.
-  int panel_max_brightness = 0;       // Max panel brightness
+  float panel_max_brightness = 255.0f;  // Max panel brightness
+  float panel_min_brightness = 1.0f;  // Min panel brightness
   uint32_t left_roi_count = 1;        // Number if ROI supported on left panel
   uint32_t right_roi_count = 1;       // Number if ROI supported on right panel
   bool hdr_enabled = false;           // HDR feature supported
@@ -584,7 +612,7 @@ struct HWDestScaleInfo {
 typedef std::map<uint32_t, HWDestScaleInfo *> DestScaleInfoMap;
 
 struct HWAVRInfo {
-  bool enable = false;                // Flag to Enable AVR feature
+  bool update = false;                // Update avr setting.
   HWAVRModes mode = kContinuousMode;  // Specifies the AVR mode
 };
 
@@ -622,6 +650,8 @@ struct HWPipeInfo {
   HWPipeTonemapInversePma inverse_pma_info = {};
   HWPipeCscInfo dgm_csc_info = {};
   std::vector<HWPipeTonemapLutInfo> lut_info = {};
+  HWSrcTonemap tonemap = kSrcTonemapNone;
+  LayerTransform transform;
 };
 
 struct HWSolidfillStage {
@@ -676,6 +706,7 @@ struct HWLayersInfo {
   LayerRect partial_fb_roi = {};   // Damaged area in framebuffer.
   bool roi_split = false;          // Indicates separated left and right ROI
   bool async_cursor_updates = false;  // Cursor layer allowed to have async updates
+  bool fast_path_composition = false;  // Indicates frame has fast path composition
   DestScaleInfoMap dest_scale_info_map = {};
   HWHDRLayerInfo hdr_layer_info = {};
   Handle pvt_data = NULL;   // Private data used by sdm extension only.
@@ -693,12 +724,18 @@ struct HWQosData {
   uint32_t rot_clock_hz = 0;
 };
 
+enum UpdateType {
+  kUpdateResources,  // Indicates Strategy & RM execution, which can update resources.
+  kUpdateMax,
+};
+
 struct HWLayers {
   HWLayersInfo info {};
   HWLayerConfig config[kMaxSDELayers] {};
   float output_compression = 1.0f;
   HWQosData qos_data = {};
   HWAVRInfo hw_avr_info = {};
+  std::bitset<kUpdateMax> updates_mask = 0;
 };
 
 struct HWDisplayAttributes : DisplayConfigVariableInfo {
@@ -732,6 +769,24 @@ struct HWDisplayAttributes : DisplayConfigVariableInfo {
 
   bool operator ==(const HWDisplayAttributes &display_attributes) {
     return !(operator !=(display_attributes));
+  }
+
+  bool OnlyFpsChanged(const HWDisplayAttributes &display_attributes) {
+    return ((fps != display_attributes.fps) &&
+            (vsync_period_ns != display_attributes.vsync_period_ns) &&
+            (x_pixels == display_attributes.x_pixels) &&
+            (y_pixels == display_attributes.y_pixels) &&
+            (x_dpi == display_attributes.x_dpi) &&
+            (y_dpi == display_attributes.y_dpi) &&
+            (topology == display_attributes.topology) &&
+            (is_device_split == display_attributes.is_device_split) &&
+            (v_front_porch == display_attributes.v_front_porch) &&
+            (v_back_porch == display_attributes.v_back_porch) &&
+            (v_pulse_width == display_attributes.v_pulse_width) &&
+            (h_total == display_attributes.h_total) &&
+            (is_yuv == display_attributes.is_yuv) &&
+            (s3d_config == display_attributes.s3d_config) &&
+            (clock_khz == display_attributes.clock_khz));
   }
 };
 

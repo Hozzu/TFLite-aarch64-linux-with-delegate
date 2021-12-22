@@ -15,7 +15,7 @@ typedef unsigned short ushort;
 extern "C" {
 #endif
 
-#if defined (_WIN32) || defined(__QNXNTO__) || defined(_PC)
+#if defined (_WIN32) || defined(__QNXNTO__) || defined(_PC) || defined(__AGL__)
 #define ALOGE printf
 #define __func__ __FUNCTION__
 #endif
@@ -159,6 +159,7 @@ typedef struct {
   int32_t num_exposure;
   shdr_tuning_t *tuning;
   shdr_stats_info_t *stats_info;
+  uint8_t Dump_frame;
 } shdr_input_param_t;
 
 /**** shdr process output params ***/

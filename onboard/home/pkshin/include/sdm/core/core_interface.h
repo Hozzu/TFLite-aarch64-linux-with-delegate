@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2014 - 2016, 2018 The Linux Foundation. All rights reserved.
+* Copyright (c) 2014 - 2016, 2018, 2020, The Linux Foundation. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are
@@ -46,6 +46,7 @@
 #include "buffer_allocator.h"
 #include "buffer_sync_handler.h"
 #include "socket_handler.h"
+#include "notifier_interface.h"
 
 /*! @brief Display manager interface version.
 
@@ -259,6 +260,17 @@ class CoreInterface {
     @return \link DisplayError \endlink
   */
   virtual DisplayError GetMaxDisplaysSupported(DisplayType type, int32_t *max_displays) = 0;
+
+  /*! @brief Method to get notifier interface.
+
+    @details Client shall use this method to get the notifier interface to notify SDM if event
+    happens externally.
+
+    @param[out] Notifier interface.
+
+    @return \link DisplayError \endlink
+  */
+  virtual DisplayError GetNotifierInterface(NotifierInterface **interface) = 0;
 
  protected:
   virtual ~CoreInterface() { }
