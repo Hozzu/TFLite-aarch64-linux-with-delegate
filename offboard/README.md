@@ -19,6 +19,7 @@ GPU delegate API:
   
 #include <tensorflow/lite/delegates/gpu/delegate.h>  
   
+// Prepare GPU delegate.  
 TfLiteGpuDelegateOptionsV2 options = TfLiteGpuDelegateOptionsV2Default();  
 auto * delegate_ptr = TfLiteGpuDelegateV2Create(&options);  
 tflite::Interpreter::TfLiteDelegatePtr delegate(delegate_ptr, &TfLiteGpuDelegateV2Delete);  
