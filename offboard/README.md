@@ -19,10 +19,11 @@ GPU delegate API:
   
 #include <tensorflow/lite/delegates/gpu/delegate.h>  
   
-// Prepare GPU delegate.  
-auto* delegate = TfLiteGpuDelegateV2Create(nullptr);  
-interpreter->ModifyGraphWithDelegate(delegate);  
-
+TfLiteGpuDelegateOptionsV2 options = TfLiteGpuDelegateOptionsV2Default();  
+auto * delegate_ptr = TfLiteGpuDelegateV2Create(&options);  
+tflite::Interpreter::TfLiteDelegatePtr delegate(delegate_ptr, &TfLiteGpuDelegateV2Delete);  
+interpreter->ModifyGraphWithDelegate(delegate.get());  
+  
 // Clean up.  
 TfLiteGpuDelegateV2Delete(delegate);  
 
@@ -39,7 +40,10 @@ TfLiteHexagonDelegateOptions params = {0};
 // If use case will need to resize input or anything that can trigger  
 // re-applying delegates then 'delegate_ptr' need to outlive the interpreter.  
 auto* delegate_ptr = TfLiteHexagonDelegateCreate(&params);  
-TfLiteDelegatePtr delegate(delegate_ptr, [](TfLiteDelegate* delegate) { TfLiteHexagonDelegateDelete(delegate); });  
+TfLiteDelegatePtr delegate(delegate_ptr, [](TfLiteDelegate* delegate) {  
+TfLiteHexagonDelegateDelete(delegate);  
+TfLiteHexagonTearDown();  
+});  
 interpreter->ModifyGraphWithDelegate(delegate.get());  
   
 // After usage of delegate.  
