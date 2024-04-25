@@ -55,6 +55,11 @@ struct _GstVideoAncillary {
   gpointer _gst_reserved[GST_PADDING];
 };
 
+/**
+ * GstVideoAncillaryDID:
+ *
+ * Since: 1.16
+ */
 typedef enum {
   GST_VIDEO_ANCILLARY_DID_UNDEFINED = 0x00,
   GST_VIDEO_ANCILLARY_DID_DELETION  = 0x80,
@@ -86,6 +91,7 @@ typedef enum {
  * GstVideoAncillaryDID16:
  * @GST_VIDEO_ANCILLARY_DID16_S334_EIA_708: CEA 708 Ancillary data according to SMPTE 334
  * @GST_VIDEO_ANCILLARY_DID16_S334_EIA_608: CEA 608 Ancillary data according to SMPTE 334
+ * @GST_VIDEO_ANCILLARY_DID16_S2016_3_AFD_BAR: AFD/Bar Ancillary data according to SMPTE 2016-3 (Since: 1.18)
  *
  * Some know types of Ancillary Data identifiers.
  *
@@ -94,6 +100,7 @@ typedef enum {
 typedef enum {
   GST_VIDEO_ANCILLARY_DID16_S334_EIA_708	= 0x6101,
   GST_VIDEO_ANCILLARY_DID16_S334_EIA_608	= 0x6102,
+  GST_VIDEO_ANCILLARY_DID16_S2016_3_AFD_BAR	= 0x4105,
 } GstVideoAncillaryDID16;
 
 /* Closed Caption support */

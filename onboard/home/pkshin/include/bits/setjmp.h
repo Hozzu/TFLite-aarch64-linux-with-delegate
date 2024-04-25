@@ -1,48 +1,33 @@
-/*
- * Copyright (C) 2005-2011 by Wind River Systems, Inc.
- *
- * SPDX-License-Identifier: MIT
- * 
- */
+/* Copyright (C) 1997-2020 Free Software Foundation, Inc.
 
-#pragma once
+   This file is part of the GNU C Library.
 
-#if defined (__bpf__)
-#define __MHWORDSIZE			64
-#elif defined (__arm__)
-#define __MHWORDSIZE			32
-#elif defined (__aarch64__) && defined ( __LP64__)
-#define __MHWORDSIZE			64
-#elif defined (__aarch64__)
-#define __MHWORDSIZE			32
-#else
-#include <bits/wordsize.h>
-#if defined (__WORDSIZE)
-#define __MHWORDSIZE			__WORDSIZE
-#else
-#error "__WORDSIZE is not defined"
-#endif
-#endif
+   The GNU C Library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU Lesser General Public License as
+   published by the Free Software Foundation; either version 2.1 of the
+   License, or (at your option) any later version.
 
-#if __MHWORDSIZE == 32
+   The GNU C Library is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Lesser General Public License for more details.
 
-#ifdef _MIPS_SIM
+   You should have received a copy of the GNU Lesser General Public
+   License along with the GNU C Library; if not, see
+   <https://www.gnu.org/licenses/>.  */
 
-#if _MIPS_SIM == _ABIO32
-#include <bits/setjmp-32.h>
-#elif _MIPS_SIM == _ABIN32
-#include <bits/setjmp-n32.h>
-#else
-#error "Unknown _MIPS_SIM"
+#ifndef _BITS_SETJMP_H
+#define _BITS_SETJMP_H 1
+
+#if !defined _SETJMP_H && !defined _PTHREAD_H
+# error "Never include <bits/setjmp.h> directly; use <setjmp.h> instead."
 #endif
 
-#else /* _MIPS_SIM is not defined */
-#include <bits/setjmp-32.h>
-#endif
+#ifndef _ASM
+/* Jump buffer contains:
+   x19-x28, x29(fp), x30(lr), (x31)sp, d8-d15.  Other registers are not
+   saved.  */
+__extension__ typedef unsigned long long __jmp_buf [22];
 
-#elif __MHWORDSIZE == 64
-#include <bits/setjmp-64.h>
-#else
-#error "Unknown __WORDSIZE detected"
-#endif /* matches #if __WORDSIZE == 32 */
-  
+#endif
+#endif

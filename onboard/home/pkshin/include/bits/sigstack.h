@@ -1,48 +1,32 @@
-/*
- * Copyright (C) 2005-2011 by Wind River Systems, Inc.
- *
- * SPDX-License-Identifier: MIT
- * 
- */
+/* sigstack, sigaltstack definitions.
+   Copyright (C) 2015-2020 Free Software Foundation, Inc.
+   This file is part of the GNU C Library.
 
-#pragma once
+   The GNU C Library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU Lesser General Public
+   License as published by the Free Software Foundation; either
+   version 2.1 of the License, or (at your option) any later version.
 
-#if defined (__bpf__)
-#define __MHWORDSIZE			64
-#elif defined (__arm__)
-#define __MHWORDSIZE			32
-#elif defined (__aarch64__) && defined ( __LP64__)
-#define __MHWORDSIZE			64
-#elif defined (__aarch64__)
-#define __MHWORDSIZE			32
-#else
-#include <bits/wordsize.h>
-#if defined (__WORDSIZE)
-#define __MHWORDSIZE			__WORDSIZE
-#else
-#error "__WORDSIZE is not defined"
-#endif
-#endif
+   The GNU C Library is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Lesser General Public License for more details.
 
-#if __MHWORDSIZE == 32
+   You should have received a copy of the GNU Lesser General Public
+   License along with the GNU C Library; if not, see
+   <https://www.gnu.org/licenses/>.  */
 
-#ifdef _MIPS_SIM
+#ifndef _BITS_SIGSTACK_H
+#define _BITS_SIGSTACK_H 1
 
-#if _MIPS_SIM == _ABIO32
-#include <bits/sigstack-32.h>
-#elif _MIPS_SIM == _ABIN32
-#include <bits/sigstack-n32.h>
-#else
-#error "Unknown _MIPS_SIM"
+#if !defined _SIGNAL_H && !defined _SYS_UCONTEXT_H
+# error "Never include this file directly.  Use <signal.h> instead"
 #endif
 
-#else /* _MIPS_SIM is not defined */
-#include <bits/sigstack-32.h>
-#endif
+/* Minimum stack size for a signal handler.  */
+#define MINSIGSTKSZ	5120
 
-#elif __MHWORDSIZE == 64
-#include <bits/sigstack-64.h>
-#else
-#error "Unknown __WORDSIZE detected"
-#endif /* matches #if __WORDSIZE == 32 */
-  
+/* System default stack size.  */
+#define SIGSTKSZ	16384
+
+#endif /* bits/sigstack.h */

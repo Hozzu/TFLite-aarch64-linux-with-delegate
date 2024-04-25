@@ -32,19 +32,19 @@
 
 */
 /*====*====*====*====*====*====*====*====*====*====*====*====*====*====*====*
-  Copyright (c) 2010-2018 Qualcomm Technologies, Inc.
+  Copyright (c) 2010-2018, 2020 Qualcomm Technologies, Inc.
   All rights reserved.
   Confidential and Proprietary - Qualcomm Technologies, Inc.
 
 
-  $Header$
+  $Header
  *====*====*====*====*====*====*====*====*====*====*====*====*====*====*====*/
 /*====*====*====*====*====*====*====*====*====*====*====*====*====*====*====*
  *THIS IS AN AUTO GENERATED FILE. DO NOT ALTER IN ANY WAY
  *====*====*====*====*====*====*====*====*====*====*====*====*====*====*====*/
 
-/* This file was generated with Tool version 6.14.7
-   It was generated on: Tue Oct 16 2018 (Spin 0)
+/* This file was generated with Tool version 6.14.9
+   It was generated on: Tue Mar 17 2020 (Spin 0)
    From IDL File: user_identity_module_v01.idl */
 
 /** @defgroup uim_qmi_consts Constant values defined in the IDL */
@@ -70,11 +70,11 @@ extern "C" {
 /** Major Version Number of the IDL used to generate this file */
 #define UIM_V01_IDL_MAJOR_VERS 0x01
 /** Revision Number of the IDL used to generate this file */
-#define UIM_V01_IDL_MINOR_VERS 0x57
+#define UIM_V01_IDL_MINOR_VERS 0x5D
 /** Major Version Number of the qmi_idl_compiler used to generate this file */
 #define UIM_V01_IDL_TOOL_VERS 0x06
 /** Maximum Defined Message ID */
-#define UIM_V01_MAX_MESSAGE_ID 0x0071
+#define UIM_V01_MAX_MESSAGE_ID 0x0074
 /**
     @}
   */
@@ -156,6 +156,9 @@ extern "C" {
 #define QMI_UIM_BER_TLV_CONTENT_MAX_V01 4096
 #define QMI_UIM_LONG_SELECT_RESPONSE_MAX_V01 1024
 #define QMI_UIM_SIMLOCK_DATA_EXT_MAX_V01 4096
+#define QMI_UIM_INACTIVE_SIMLOCK_CONFIG_MAX_V01 64
+#define QMI_UIM_CONFIG_NICKNAME_MAX_V01 32
+#define QMI_UIM_TOKEN_LEN_V01 32
 #define QMI_UIM_SEC_ATTRIBUTE_PIN1_BIT_V01 0
 #define QMI_UIM_SEC_ATTRIBUTE_PIN2_BIT_V01 1
 #define QMI_UIM_SEC_ATTRIBUTE_UPIN_BIT_V01 2
@@ -2993,7 +2996,7 @@ typedef struct {
       - UIM_CARD_ERROR_CODE_CMD_TIMEOUT (0x0A) --  Command Timeout error
  \n
  Other values are possible and reserved for future use. When an
- unknown value is received, it is to be handled as ``Unknown''.
+ unknown value is received, it is to be handled as "Unknown".
  */
 
   uint32_t app_info_len;  /**< Must be set to # of elements in app_info */
@@ -3133,6 +3136,64 @@ typedef enum {
     @}
   */
 
+/** @addtogroup uim_qmi_aggregates
+    @{
+  */
+typedef struct {
+
+  uint32_t eid_len;  /**< Must be set to # of elements in eid */
+  uint8_t eid[QMI_UIM_EID_LEN_V01];
+  /**<   Indicates the EID of an eUICC.
+       The EID is returned by eUICC encoded in ASN1 format to a GET EID command,
+	   based on SGP.22 Technical Specification Section 5.7.20,\n
+	   GetEuiccDataResponse ::= [62] SEQUENCE { -- Tag 'BF3E' \n
+         eidValue [APPLICATION 26] Octet16 -- tag '5A'\n
+       }
+       BF3E - Master tag \n
+	   0x12 - Length \n
+	   0x5A - Internal tag \n
+	   0x10 - Length of EID \n
+	   The EID is 16 bytes long containing 32 digits
+  */
+}uim_slot_eid_info_type_v01;  /* Type */
+/**
+    @}
+  */
+
+/** @addtogroup uim_qmi_aggregates
+    @{
+  */
+typedef struct {
+
+  uint32_t iccid_len;  /**< Must be set to # of elements in iccid */
+  uint8_t iccid[QMI_UIM_ICCID_LEN_MAX_V01];
+  /**<   Indicates the ICCID
+  */
+
+  uint32_t atr_len;  /**< Must be set to # of elements in atr */
+  uint8_t atr[QMI_UIM_ATR_DATA_MAX_V01];
+  /**<   Indicates the ATR
+  */
+
+  uint32_t eid_len;  /**< Must be set to # of elements in eid */
+  uint8_t eid[QMI_UIM_EID_LEN_V01];
+  /**<   Indicates the EID of an eUICC.
+       The EID is returned by eUICC encoded in ASN1 format to a GET EID command,
+	   based on SGP.22 Technical Specification Section 5.7.20,\n
+	   GetEuiccDataResponse ::= [62] SEQUENCE { -- Tag 'BF3E' \n
+         eidValue [APPLICATION 26] Octet16 -- tag '5A'\n
+       }
+       BF3E - Master tag \n
+	   0x12 - Length \n
+	   0x5A - Internal tag \n
+	   0x10 - Length of EID \n
+	   The EID is 16 bytes long containing 32 digits
+  */
+}uim_extended_card_info_type_v01;  /* Type */
+/**
+    @}
+  */
+
 /** @addtogroup uim_qmi_messages
     @{
   */
@@ -3218,6 +3279,24 @@ typedef struct {
  \n
  Other values are possible and reserved for future use.
  */
+
+  /* Optional */
+  /*  Extended Info */
+  uint8_t extended_card_info_valid;  /**< Must be set to true if extended_card_info is being passed */
+  uint32_t extended_card_info_len;  /**< Must be set to # of elements in extended_card_info */
+  uim_extended_card_info_type_v01 extended_card_info[QMI_UIM_PHYSICAL_SLOTS_MAX_V01];
+  /**<   \n Indicates the ICCID, EID and ATR for supported slots.
+  */
+
+  /* Optional */
+  /*  Momentary Power Down */
+  uint8_t is_momentary_power_down_valid;  /**< Must be set to true if is_momentary_power_down is being passed */
+  uint32_t is_momentary_power_down_len;  /**< Must be set to # of elements in is_momentary_power_down */
+  uint8_t is_momentary_power_down[QMI_UIM_EXTENDED_CARDS_MAX_V01];
+  /**<   Indicates whether the card power down is momentary. Valid values: \n
+        - 0 -- Not a momentary card power down\n
+        - 1 -- Momentary card power down
+  */
 }uim_get_card_status_resp_msg_v01;  /* Message */
 /**
     @}
@@ -3332,6 +3411,24 @@ typedef struct {
  \n
  Other values are possible and reserved for future use.
  */
+
+  /* Optional */
+  /*  Extended Info */
+  uint8_t extended_card_info_valid;  /**< Must be set to true if extended_card_info is being passed */
+  uint32_t extended_card_info_len;  /**< Must be set to # of elements in extended_card_info */
+  uim_extended_card_info_type_v01 extended_card_info[QMI_UIM_PHYSICAL_SLOTS_MAX_V01];
+  /**<   \n Indicates the ICCID, ATR and EID for the slots supported.
+  */
+
+  /* Optional */
+  /*  Momentary Power Down */
+  uint8_t is_momentary_power_down_valid;  /**< Must be set to true if is_momentary_power_down is being passed */
+  uint32_t is_momentary_power_down_len;  /**< Must be set to # of elements in is_momentary_power_down */
+  uint8_t is_momentary_power_down[QMI_UIM_EXTENDED_CARDS_MAX_V01];
+  /**<   Indicates whether the card power down is momentary. Valid values: \n
+        - 0 -- Not a momentary card power down\n
+        - 1 -- Momentary card power down
+  */
 }uim_status_change_ind_msg_v01;  /* Message */
 /**
     @}
@@ -3977,6 +4074,7 @@ typedef uint32_t uim_get_configuration_mask_v01;
 #define UIM_GET_CONFIGURATION_REMOTE_SIMLOCK_STORAGE_V01 ((uim_get_configuration_mask_v01)0x0040) /**<  Remote SimLock storage  */
 #define UIM_GET_CONFIGURATION_EMERGENCY_ONLY_V01 ((uim_get_configuration_mask_v01)0x0080) /**<  Emergency Only mode status  */
 #define UIM_GET_CONFIGURATION_EXTENDED_APDU_V01 ((uim_get_configuration_mask_v01)0x0100) /**<  Extended length APDUs are supported  */
+#define UIM_GET_CONFIGURATION_INACTIVE_SIMLOCK_CONFIG_V01 ((uim_get_configuration_mask_v01)0x0200) /**<  Inactive SimLock configuration  */
 /** @addtogroup uim_qmi_messages
     @{
   */
@@ -3997,6 +4095,7 @@ typedef struct {
       - UIM_GET_CONFIGURATION_REMOTE_SIMLOCK_STORAGE (0x0040) --  Remote SimLock storage
       - UIM_GET_CONFIGURATION_EMERGENCY_ONLY (0x0080) --  Emergency Only mode status
       - UIM_GET_CONFIGURATION_EXTENDED_APDU (0x0100) --  Extended length APDUs are supported
+      - UIM_GET_CONFIGURATION_INACTIVE_SIMLOCK_CONFIG (0x0200) --  Inactive SimLock configuration
  \n
  All other bits are reserved for future use; if the TLV is missing,
  the service returns all configuration items in the response.
@@ -4178,6 +4277,22 @@ typedef struct {
     @}
   */
 
+/** @addtogroup uim_qmi_aggregates
+    @{
+  */
+typedef struct {
+
+  uint8_t config_id;
+  /**<   Configuration ID for inactive SimLock configuration.*/
+
+  uint32_t config_nickname_len;  /**< Must be set to # of elements in config_nickname */
+  char config_nickname[QMI_UIM_CONFIG_NICKNAME_MAX_V01];
+  /**<   Configuration nickname for the operator that corresponds to the inactive SimLock configuration.*/
+}uim_inactive_simlock_config_type_v01;  /* Type */
+/**
+    @}
+  */
+
 /** @addtogroup uim_qmi_messages
     @{
   */
@@ -4292,6 +4407,14 @@ typedef struct {
        Valid values:\n
          - 0 -- Modem does not support extended length APDUs \n
          - 1 -- Modem supports extended length APDUs
+  */
+
+  /* Optional */
+  /*  Inactive SimLock Configuration */
+  uint8_t inactive_simlock_config_valid;  /**< Must be set to true if inactive_simlock_config is being passed */
+  uint32_t inactive_simlock_config_len;  /**< Must be set to # of elements in inactive_simlock_config */
+  uim_inactive_simlock_config_type_v01 inactive_simlock_config[QMI_UIM_INACTIVE_SIMLOCK_CONFIG_MAX_V01];
+  /**<   \n Lists all available inactive SimLock configurations.
   */
 }uim_get_configuration_resp_msg_v01;  /* Message */
 /**
@@ -5486,8 +5609,44 @@ typedef struct {
   /**<   Indicates whether the card is an eUICC card based on the ATR. Values: \n
         0 - Not an eUICC card \n
         1 - eUICC card
-   */
+  */
 }uim_physical_slot_information_type_v01;  /* Type */
+/**
+    @}
+  */
+
+/** @addtogroup uim_qmi_aggregates
+    @{
+  */
+typedef struct {
+
+  uim_extended_card_state_enum_v01 card_state;
+  /**<   Indicates the state of the card. Valid values:\n
+      - UIM_EXTENDED_CARD_STATE_ABSENT (0x00) --  Absent \n
+      - UIM_EXTENDED_CARD_STATE_PRESENT (0x01) --  Present \n
+      - UIM_EXTENDED_CARD_STATE_ERROR (0x02) --  Error \n
+      - UIM_EXTENDED_CARD_STATE_UNKNOWN (0x03) --  Unknown
+ */
+
+  uim_card_error_code_enum_v01 error_code;
+  /**<   Indicates the reason for the card error, and is valid only when the card
+ state is Error. Valid values:\n
+      - UIM_CARD_ERROR_CODE_UNKNOWN (0x00) --  Unknown\n
+      - UIM_CARD_ERROR_CODE_POWER_DOWN (0x01) --  Power down\n
+      - UIM_CARD_ERROR_CODE_POLL_ERROR (0x02) --  Poll error\n
+      - UIM_CARD_ERROR_CODE_NO_ATR_RECEIVED (0x03) --  No ATR received\n
+      - UIM_CARD_ERROR_CODE_VOLT_MISMATCH (0x04) --  Volt mismatch\n
+      - UIM_CARD_ERROR_CODE_PARITY_ERROR (0x05) --  Parity error\n
+      - UIM_CARD_ERROR_CODE_POSSIBLY_REMOVED (0x06) --  Unknown, possibly removed\n
+      - UIM_CARD_ERROR_CODE_SIM_TECHNICAL_PROBLEMS (0x07) --  Card returned technical problems\n
+      - UIM_CARD_ERROR_CODE_NULL_BYTES (0x08) --  Card returned NULL bytes\n
+      - UIM_CARD_ERROR_CODE_SAP_CONNECTED (0x09) --  Terminal in SAP mode
+      - UIM_CARD_ERROR_CODE_CMD_TIMEOUT (0x0A) --  Command Timeout error
+ \n
+ Other values are possible and reserved for future use. When an
+ unknown value is received, it is to be handled as ``Unknown''.
+ */
+}uim_extended_card_state_type_v01;  /* Type */
 /**
     @}
   */
@@ -5527,7 +5686,26 @@ typedef struct {
   /**<   \n Additional information of the physical slots on the device.\n
        The number of elements corresponds with the number of physical slots
        on the device.
-    */
+  */
+
+  /* Optional */
+  /*  Slot EID Information */
+  uint8_t slot_eid_info_valid;  /**< Must be set to true if slot_eid_info is being passed */
+  uint32_t slot_eid_info_len;  /**< Must be set to # of elements in slot_eid_info */
+  uim_slot_eid_info_type_v01 slot_eid_info[QMI_UIM_PHYSICAL_SLOTS_MAX_V01];
+  /**<   \n EID of the eUICC card. The EID can be from an active or an inactive slot.\n
+       Applicable only when the is_euicc field indicates the card is an eUICC.
+  */
+
+  /* Optional */
+  /*  Extended Card State */
+  uint8_t extended_card_state_valid;  /**< Must be set to true if extended_card_state is being passed */
+  uint32_t extended_card_state_len;  /**< Must be set to # of elements in extended_card_state */
+  uim_extended_card_state_type_v01 extended_card_state[QMI_UIM_PHYSICAL_SLOTS_MAX_V01];
+  /**<   \n Extended card status containing information about the logical state.\n
+       In the existing TLV, only card physical status was provided.
+       Here logical error state whenever applicable when the card is present is captured.
+  */
 }uim_get_slots_status_resp_msg_v01;  /* Message */
 /**
     @}
@@ -5553,7 +5731,26 @@ typedef struct {
   /**<   \n Additional information of the physical slots on the device.\n
        The number of elements corresponds with the number of physical slots
        on the device.
-      */
+  */
+
+  /* Optional */
+  /*  Slot EID Information */
+  uint8_t slot_eid_info_valid;  /**< Must be set to true if slot_eid_info is being passed */
+  uint32_t slot_eid_info_len;  /**< Must be set to # of elements in slot_eid_info */
+  uim_slot_eid_info_type_v01 slot_eid_info[QMI_UIM_PHYSICAL_SLOTS_MAX_V01];
+  /**<   \n EID of the eUICC card. EID can be from an active or an inactive slot.\n
+       Applicable only when is_euicc field indicates the card is an eUICC.
+   */
+
+  /* Optional */
+  /*  Extended Card State */
+  uint8_t extended_card_state_valid;  /**< Must be set to true if extended_card_state is being passed */
+  uint32_t extended_card_state_len;  /**< Must be set to # of elements in extended_card_state */
+  uim_extended_card_state_type_v01 extended_card_state[QMI_UIM_PHYSICAL_SLOTS_MAX_V01];
+  /**<   \n Extended card status containing information about logical state.\n
+       In the existing TLV only card physical status was provided.
+       Here logical error state whenever applicable when the card is present is captured.\n
+  */
 }uim_slot_status_change_ind_msg_v01;  /* Message */
 /**
     @}
@@ -6124,6 +6321,14 @@ typedef struct {
   uint8_t feature_gw_iccid_perso_valid;  /**< Must be set to true if feature_gw_iccid_perso is being passed */
   uint32_t feature_gw_iccid_perso_len;  /**< Must be set to # of elements in feature_gw_iccid_perso */
   uim_gw_iccid_perso_type_v01 feature_gw_iccid_perso[QMI_UIM_PERSO_NUM_GW_ICCID_MAX_V01];
+
+  /* Optional */
+  /*  Additional Control Key */
+  uint8_t additional_ck_value_valid;  /**< Must be set to true if additional_ck_value is being passed */
+  uint32_t additional_ck_value_len;  /**< Must be set to # of elements in additional_ck_value */
+  char additional_ck_value[QMI_UIM_CK_MAX_V01];
+  /**<   Additional control key value. This value is a sequence of ASCII characters.
+  */
 }uim_personalization_req_msg_v01;  /* Message */
 /**
     @}
@@ -7528,7 +7733,7 @@ typedef struct {
   uint8_t simlock_data_valid;  /**< Must be set to true if simlock_data is being passed */
   uint32_t simlock_data_len;  /**< Must be set to # of elements in simlock_data */
   uint8_t simlock_data[QMI_UIM_SIMLOCK_DATA_MAX_V01];
-  /**<   SimLock data used when data is less than or equal to 1024 bytes*/
+  /**<   SimLock data used when data is less than or equal to 1024 bytes. */
 
   /* Optional */
   /*  Remote Unlock Operation */
@@ -7549,7 +7754,7 @@ typedef struct {
   uint8_t simlock_data_ext_valid;  /**< Must be set to true if simlock_data_ext is being passed */
   uint32_t simlock_data_ext_len;  /**< Must be set to # of elements in simlock_data_ext */
   uint8_t simlock_data_ext[QMI_UIM_SIMLOCK_DATA_EXT_MAX_V01];
-  /**<   SimLock Extended data used when data is greater than 1024 bytes*/
+  /**<   SimLock extended data used when data is greater than 1024 bytes. */
 }uim_remote_unlock_req_msg_v01;  /* Message */
 /**
     @}
@@ -7590,7 +7795,7 @@ typedef struct {
   uint8_t encrypted_key_valid;  /**< Must be set to true if encrypted_key is being passed */
   uint32_t encrypted_key_len;  /**< Must be set to # of elements in encrypted_key */
   uint8_t encrypted_key[QMI_UIM_ENCRYPTED_KEY_MAX_V01];
-  /**<   Encrypted value of the key.*/
+  /**<    Encrypted value of the key. */
 
   /* Optional */
   /*  SimLock Remote Lock/Unlock Response */
@@ -7604,25 +7809,26 @@ typedef struct {
   uint8_t hmac_data_valid;  /**< Must be set to true if hmac_data is being passed */
   uint32_t hmac_data_len;  /**< Must be set to # of elements in hmac_data */
   uint8_t hmac_data[QMI_UIM_HMAC_MAX_V01];
-  /**<   HMAC generated on the input data.*/
+  /**<    HMAC generated on the input data.*/
 
   /* Optional */
   /*  Highest Major and Minor Version of Incoming Blob */
   uint8_t maximum_version_valid;  /**< Must be set to true if maximum_version is being passed */
   uim_remote_unlock_version_type_v01 maximum_version;
-  /**<   \n Highest major and minor version of incoming blob that is supported by SimLock.*/
+  /**<    \n Highest major and minor version of incoming blob that is supported by SimLock.*/
 
   /* Optional */
-  /*  SimLock Blob request generated */
+  /*  SimLock Blob Request Generated */
   uint8_t blob_request_valid;  /**< Must be set to true if blob_request is being passed */
   uint32_t blob_request_len;  /**< Must be set to # of elements in blob_request */
   uint8_t blob_request[QMI_UIM_SIMLOCK_DATA_MAX_V01];
-  /**<   Blob request generated.*/
+  /**<    Blob request generated.*/
 
   /* Optional */
-  /*  delay timer value in seconds */
+  /*  Delay Timer Value in Seconds */
   uint8_t delay_timer_value_valid;  /**< Must be set to true if delay_timer_value is being passed */
   uint16_t delay_timer_value;
+  /**<   Delay timer value in seconds started by the SimLock.*/
 }uim_remote_unlock_resp_msg_v01;  /* Message */
 /**
     @}
@@ -8268,12 +8474,12 @@ typedef struct {
   /*  Reset Option */
   uint8_t reset_option_valid;  /**< Must be set to true if reset_option is being passed */
   uim_reset_option_mask_v01 reset_option;
-  /**<   Indicates the reset option for eUICC. Valid values: \n
+  /**<   Indicates the reset option for the eUICC. Valid values: \n
       - UIM_RESET_TEST_PROFILES (0x01) --  Delete all the test profiles \n
       - UIM_RESET_OPERATIONAL_PROFILES (0x02) --  Delete all operational profiles
       - UIM_RESET_TO_DEFAULT_SMDP_ADDRESS (0x04) --  Reset the default SM-DP+ address
  All other bits are reserved for future use; if the TLV is missing,
- complete eUICC card will be reset.
+ the complete eUICC card is reset.
  */
 }uim_euicc_memory_reset_req_msg_v01;  /* Message */
 /**
@@ -8825,7 +9031,7 @@ typedef struct {
        the default SM-DP+ address. If default_smdp_address_len
 	   is set to zero, the existing SM-DP+ address on the eUICC is removed.
 	   If this TLV is missing, the default SM-DS address configured on the eUICC and the default
-       SM-DP+ address, if configured on the eUICC, are returned in the response.
+       SM-DP+ address (if configured on the eUICC) are returned in the response.
   */
 }uim_euicc_default_server_address_req_msg_v01;  /* Message */
 /**
@@ -9177,12 +9383,12 @@ typedef enum {
 /** @addtogroup uim_qmi_messages
     @{
   */
-/** Request Message; Sends command to the card that enables or disables regular SIM
-           profiles switch by the card */
+/** Request Message; Sends a command to the card that enables or disables switching regular SIM
+           profiles. */
 typedef struct {
 
   /* Mandatory */
-  /*  Profile switch lock */
+  /*  Profile Switch Lock */
   uim_sim_profile_switch_lock_enum_v01 lock;
   /**<   Valid values:\n
       - UIM_SIM_PROFILE_SWITCH_LOCK_DISABLE (0x00) --  Disable SIM profile switch lock in the card \n
@@ -9207,8 +9413,8 @@ typedef struct {
 /** @addtogroup uim_qmi_messages
     @{
   */
-/** Response Message; Sends command to the card that enables or disables regular SIM
-           profiles switch by the card */
+/** Response Message; Sends a command to the card that enables or disables switching regular SIM
+           profiles. */
 typedef struct {
 
   /* Mandatory */
@@ -9225,7 +9431,172 @@ typedef struct {
     @}
   */
 
+/** @addtogroup uim_qmi_messages
+    @{
+  */
+/** Request Message; Activates SimLock categories associated with the configuration ID. */
+typedef struct {
+
+  /* Mandatory */
+  /*  Configuration ID */
+  uint8_t config_id;
+  /**<   SimLock categories corresponds to the configuration ID to be activated. */
+}uim_activate_simlock_config_req_msg_v01;  /* Message */
+/**
+    @}
+  */
+
+/** @addtogroup uim_qmi_messages
+    @{
+  */
+/** Response Message; Activates SimLock categories associated with the configuration ID. */
+typedef struct {
+
+  /* Mandatory */
+  /*  Result Code */
+  qmi_response_type_v01 resp;
+  /**<   Standard response type. Contains the following data members:\n
+       qmi_result_type -- QMI_RESULT_SUCCESS or QMI_RESULT_FAILURE.\n
+       qmi_error_type  -- Error code. Possible error code values are described
+                          in the error codes section of each message
+                          definition.
+  */
+}uim_activate_simlock_config_resp_msg_v01;  /* Message */
+/**
+    @}
+  */
+
+/** @addtogroup uim_qmi_messages
+    @{
+  */
+/** Request Message; Returns the token associated with enabled SimLock categories. */
+typedef struct {
+  /* This element is a placeholder to prevent the declaration of
+     an empty struct.  DO NOT USE THIS FIELD UNDER ANY CIRCUMSTANCE */
+  char __placeholder;
+}uim_get_simlock_token_req_msg_v01;
+
+  /* Message */
+/**
+    @}
+  */
+
+/** @addtogroup uim_qmi_aggregates
+    @{
+  */
+typedef struct {
+
+  uint32_t token_len;  /**< Must be set to # of elements in token */
+  uint8_t token[QMI_UIM_TOKEN_LEN_V01];
+  /**<   Token associated with the enabled SimLock category.*/
+}uim_simlock_token_feature_type_v01;  /* Type */
+/**
+    @}
+  */
+
+/** @addtogroup uim_qmi_aggregates
+    @{
+  */
+typedef struct {
+
+  uint32_t feature_len;  /**< Must be set to # of elements in feature */
+  uim_simlock_token_feature_type_v01 feature[QMI_UIM_PERSO_FEATURE_MAX_V01];
+  /**<   Token array for all categories.*/
+}uim_simlock_token_slot_type_v01;  /* Type */
+/**
+    @}
+  */
+
+/** @addtogroup uim_qmi_messages
+    @{
+  */
+/** Response Message; Returns the token associated with enabled SimLock categories. */
+typedef struct {
+
+  /* Mandatory */
+  /*  Result Code */
+  qmi_response_type_v01 resp;
+  /**<   Standard response type. Contains the following data members:\n
+       qmi_result_type -- QMI_RESULT_SUCCESS or QMI_RESULT_FAILURE.\n
+       qmi_error_type  -- Error code. Possible error code values are described
+                          in the error codes section of each message
+                          definition.
+  */
+
+  /* Optional */
+  /*  Token for all categories on all slots */
+  uint8_t slot_valid;  /**< Must be set to true if slot is being passed */
+  uint32_t slot_len;  /**< Must be set to # of elements in slot */
+  uim_simlock_token_slot_type_v01 slot[QMI_UIM_EXTENDED_CARDS_MAX_V01];
+}uim_get_simlock_token_resp_msg_v01;  /* Message */
+/**
+    @}
+  */
+
+/** @addtogroup uim_qmi_enums
+    @{
+  */
+typedef enum {
+  UIM_ECALL_COMMAND_TYPE_ENUM_MIN_ENUM_VAL_V01 = -2147483647, /**< To force a 32 bit signed enum.  Do not change or use*/
+  UIM_COMMAND_TYPE_ECALL_START_V01 = 0x00, /**<  ECALL Stop command\n  */
+  UIM_COMMAND_TYPE_ECALL_STOP_V01 = 0x01, /**<  Ecall Start command  */
+  UIM_ECALL_COMMAND_TYPE_ENUM_MAX_ENUM_VAL_V01 = 2147483647 /**< To force a 32 bit signed enum.  Do not change or use*/
+}uim_ecall_command_type_enum_v01;
+/**
+    @}
+  */
+
+/** @addtogroup uim_qmi_messages
+    @{
+  */
+/** Request Message; Sends the ECALL START/STOP command to card */
+typedef struct {
+
+  /* Mandatory */
+  /*  Slot */
+  uim_slot_enum_v01 slot;
+  /**<   Indicates the slot to be used. Valid values:\n
+      - UIM_SLOT_1 (0x01) --  Slot 1 \n
+      - UIM_SLOT_2 (0x02) --  Slot 2 \n
+      - UIM_SLOT_3 (0x03) --  Slot 3 \n
+      - UIM_SLOT_4 (0x04) --  Slot 4 \n
+      - UIM_SLOT_5 (0x05) --  Slot 5
+ */
+
+  /* Mandatory */
+  /*  ECALL command */
+  uim_ecall_command_type_enum_v01 ecall_command;
+  /**<   Indicates the ECALL command to send to card. Valid values:\n
+      - UIM_COMMAND_TYPE_ECALL_START (0x00) --  ECALL Stop command\n
+      - UIM_COMMAND_TYPE_ECALL_STOP (0x01) --  Ecall Start command
+ */
+}uim_send_ecall_command_req_msg_v01;  /* Message */
+/**
+    @}
+  */
+
+/** @addtogroup uim_qmi_messages
+    @{
+  */
+/** Response Message; Sends the ECALL START/STOP command to card */
+typedef struct {
+
+  /* Mandatory */
+  /*  Result Code */
+  qmi_response_type_v01 resp;
+  /**<   Standard response type. Contains the following data members:\n
+       qmi_result_type -- QMI_RESULT_SUCCESS or QMI_RESULT_FAILURE.\n
+       qmi_error_type  -- Error code. Possible error code values are described
+                          in the error codes section of each message
+                          definition.
+  */
+}uim_send_ecall_command_resp_msg_v01;  /* Message */
+/**
+    @}
+  */
+
 /* Conditional compilation tags for message removal */
+//#define REMOVE_QMI_UIM_ACTIVATE_SIMLOCK_CONFIG_V01
 //#define REMOVE_QMI_UIM_ADD_PROFILE_V01
 //#define REMOVE_QMI_UIM_AUTHENTICATE_V01
 //#define REMOVE_QMI_UIM_AUTHENTICATE_IND_V01
@@ -9256,6 +9627,7 @@ typedef struct {
 //#define REMOVE_QMI_UIM_GET_PLMN_NAME_TABLE_INFO_V01
 //#define REMOVE_QMI_UIM_GET_PROFILE_INFO_V01
 //#define REMOVE_QMI_UIM_GET_SERVICE_STATUS_V01
+//#define REMOVE_QMI_UIM_GET_SIMLOCK_TOKEN_V01
 //#define REMOVE_QMI_UIM_GET_SIM_PROFILE_V01
 //#define REMOVE_QMI_UIM_GET_SLOTS_STATUS_V01
 //#define REMOVE_QMI_UIM_GET_SUPPORTED_FIELDS_V01
@@ -9298,6 +9670,7 @@ typedef struct {
 //#define REMOVE_QMI_UIM_SEARCH_RECORD_IND_V01
 //#define REMOVE_QMI_UIM_SEND_APDU_V01
 //#define REMOVE_QMI_UIM_SEND_APDU_IND_V01
+//#define REMOVE_QMI_UIM_SEND_ECALL_COMMAND_V01
 //#define REMOVE_QMI_UIM_SEND_STATUS_V01
 //#define REMOVE_QMI_UIM_SESSION_CLOSED_IND_V01
 //#define REMOVE_QMI_UIM_SET_APDU_BEHAVIOR_V01
@@ -9511,6 +9884,12 @@ typedef struct {
 #define QMI_UIM_READ_BER_TLV_LONG_IND_V01 0x0070
 #define QMI_UIM_SIM_PROFILE_SWITCH_LOCK_REQ_V01 0x0071
 #define QMI_UIM_SIM_PROFILE_SWITCH_LOCK_RESP_V01 0x0071
+#define QMI_UIM_ACTIVATE_SIMLOCK_CONFIG_REQ_V01 0x0072
+#define QMI_UIM_ACTIVATE_SIMLOCK_CONFIG_RESP_V01 0x0072
+#define QMI_UIM_GET_SIMLOCK_TOKEN_REQ_V01 0x0073
+#define QMI_UIM_GET_SIMLOCK_TOKEN_RESP_V01 0x0073
+#define QMI_UIM_SEND_ECALL_COMMAND_REQ_V01 0x0074
+#define QMI_UIM_SEND_ECALL_COMMAND_RESP_V01 0x0074
 /**
     @}
   */

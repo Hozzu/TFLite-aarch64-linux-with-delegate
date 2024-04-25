@@ -16,14 +16,18 @@ limitations under the License.
 #ifndef TENSORFLOW_LITE_DELEGATES_GPU_COMMON_MODEL_BUILDER_H_
 #define TENSORFLOW_LITE_DELEGATES_GPU_COMMON_MODEL_BUILDER_H_
 
+#include <limits>
+
 #include "absl/container/flat_hash_map.h"
-#include "tensorflow/lite/c/common.h"
+#include "absl/container/flat_hash_set.h"
+#include "tensorflow/lite/builtin_ops.h"
 #include "tensorflow/lite/core/api/op_resolver.h"
+#include "tensorflow/lite/core/c/common.h"
+#include "tensorflow/lite/core/model.h"
 #include "tensorflow/lite/delegates/gpu/common/model.h"
 #include "tensorflow/lite/delegates/gpu/common/shape.h"
 #include "tensorflow/lite/delegates/gpu/common/status.h"
 #include "tensorflow/lite/delegates/gpu/common/tensor.h"
-#include "tensorflow/lite/model.h"
 
 namespace tflite {
 namespace gpu {
@@ -33,9 +37,14 @@ namespace gpu {
 // 'max_delegated_partitions' limits the maximum number of partitions to
 // delegate as a graph could possibly have multiple partitions (each partition
 // consists of a subset of ops) to be replaced.
-TfLiteIntArray* GetOpsToReplace(TfLiteContext* context,
-                                bool allow_quant_ops = false,
-                                int max_delegated_partitions = 1);
+// 'excluded_ops', if not null, specifies a set of ops that should not be
+// replaced with GPU kernels.
+TfLiteIntArray* GetOpsToReplace(
+    TfLiteContext* context, bool allow_quant_ops = false,
+    int max_delegated_partitions = 1,
+    const absl::flat_hash_set<TfLiteBuiltinOperator>* excluded_ops = nullptr,
+    int start_node_index = 0,
+    int end_node_index = std::numeric_limits<int>::max());
 
 // Extracts TFLite delegate execution plan from the input TFLite context and
 // converts it into generic graph format.

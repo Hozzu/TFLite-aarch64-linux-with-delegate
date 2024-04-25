@@ -34,9 +34,9 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
+
 #include <gst/gst.h>
 #include <gst/video/gstvideometa.h>
-#include <config.h>
 G_BEGIN_DECLS
 
 #ifndef GST_IONBUF_BAD_API

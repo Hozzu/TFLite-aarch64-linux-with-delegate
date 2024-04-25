@@ -55,11 +55,16 @@ extern "C" {
 /* -----------------------------------------------------------------------
 ** To support basic priority mapping for OSAL clients.
 ** ----------------------------------------------------------------------- */
-extern const int MM_Thread_DefaultPriority;
-extern const int MM_Thread_ComponentPriority;
+extern const int MM_Thread_CallingThreadPriority;
 extern const int MM_Thread_ModulePriority;
-extern const int MM_Thread_RealtimePriority;
 extern const int MM_Thread_BackgroundPriority;
+extern const int MM_Thread_NormalPriority;
+extern const int MM_Thread_DefaultPriority;
+extern const int MM_Thread_HighPriority;
+extern const int MM_Thread_ComponentPriority;
+extern const int MM_Thread_RealtimePriority;
+extern const int MM_Thread_ISTPriority;
+extern const int MM_Thread_ISRPriority;
 
 /**
  * Creates a thread and begins execution

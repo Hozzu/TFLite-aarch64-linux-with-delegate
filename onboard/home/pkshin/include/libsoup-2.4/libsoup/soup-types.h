@@ -19,6 +19,8 @@ typedef struct _SoupAuthDomain          SoupAuthDomain;
 typedef struct _SoupCookie              SoupCookie;
 typedef struct _SoupCookieJar           SoupCookieJar;
 typedef struct _SoupDate                SoupDate;
+typedef struct _SoupHSTSEnforcer        SoupHSTSEnforcer;
+typedef struct _SoupHSTSPolicy          SoupHSTSPolicy;
 typedef struct _SoupMessage             SoupMessage;
 typedef struct _SoupRequest             SoupRequest;
 typedef struct _SoupRequestHTTP         SoupRequestHTTP;
@@ -30,7 +32,7 @@ typedef struct _SoupSessionSync         SoupSessionSync;
 typedef struct _SoupSocket              SoupSocket;
 typedef struct _SoupURI                 SoupURI;
 typedef struct _SoupWebsocketConnection SoupWebsocketConnection;
-
+typedef struct _SoupWebsocketExtension  SoupWebsocketExtension;
 
 /*< private >*/
 typedef struct _SoupConnection        SoupConnection;

@@ -1,48 +1,34 @@
-/*
- * Copyright (C) 2005-2011 by Wind River Systems, Inc.
- *
- * SPDX-License-Identifier: MIT
- * 
- */
+/* Define FP_FAST_* macros.  AArch64 version.
+   Copyright (C) 2016-2020 Free Software Foundation, Inc.
+   This file is part of the GNU C Library.
 
-#pragma once
+   The GNU C Library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU Lesser General Public
+   License as published by the Free Software Foundation; either
+   version 2.1 of the License, or (at your option) any later version.
 
-#if defined (__bpf__)
-#define __MHWORDSIZE			64
-#elif defined (__arm__)
-#define __MHWORDSIZE			32
-#elif defined (__aarch64__) && defined ( __LP64__)
-#define __MHWORDSIZE			64
-#elif defined (__aarch64__)
-#define __MHWORDSIZE			32
-#else
-#include <bits/wordsize.h>
-#if defined (__WORDSIZE)
-#define __MHWORDSIZE			__WORDSIZE
-#else
-#error "__WORDSIZE is not defined"
-#endif
+   The GNU C Library is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Lesser General Public License for more details.
+
+   You should have received a copy of the GNU Lesser General Public
+   License along with the GNU C Library; if not, see
+   <https://www.gnu.org/licenses/>.  */
+
+#ifndef _MATH_H
+# error "Never use <bits/fp-fast.h> directly; include <math.h> instead."
 #endif
 
-#if __MHWORDSIZE == 32
+#ifdef __USE_ISOC99
 
-#ifdef _MIPS_SIM
+/* The GCC 4.6 compiler will define __FP_FAST_FMA{,F,L} if the fma{,f,l}
+   builtins are supported.  */
+# define FP_FAST_FMA 1
+# define FP_FAST_FMAF 1
 
-#if _MIPS_SIM == _ABIO32
-#include <bits/fp-fast-32.h>
-#elif _MIPS_SIM == _ABIN32
-#include <bits/fp-fast-n32.h>
-#else
-#error "Unknown _MIPS_SIM"
+# ifdef __FP_FAST_FMAL
+#  define FP_FAST_FMAL 1
+# endif
+
 #endif
-
-#else /* _MIPS_SIM is not defined */
-#include <bits/fp-fast-32.h>
-#endif
-
-#elif __MHWORDSIZE == 64
-#include <bits/fp-fast-64.h>
-#else
-#error "Unknown __WORDSIZE detected"
-#endif /* matches #if __WORDSIZE == 32 */
-  

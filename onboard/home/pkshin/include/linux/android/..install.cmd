@@ -1,0 +1,1 @@
+cmd_/home/pkshin//include/linux/android/.install := /bin/sh scripts/headers_install.sh /home/pkshin//include/linux/android ./include/uapi/linux/android binder.h; /bin/sh scripts/headers_install.sh /home/pkshin//include/linux/android ./include/generated/uapi/linux/android ; touch /home/pkshin//include/linux/android/.install

@@ -1,5 +1,5 @@
 //******************************************************************************************************************************
-// Copyright (c) 2014-2017 Qualcomm Technologies, Inc.
+// Copyright (c) 2014-2017, 2020 Qualcomm Technologies, Inc.
 // All Rights Reserved.
 // Confidential and Proprietary - Qualcomm Technologies, Inc.
 //******************************************************************************************************************************
@@ -20,6 +20,10 @@
 // Forward declaration
 class EglGbmUtils;
 class EglNativeBufferManager;
+class WaylandBufferBackend;
+
+struct wl_display;      // NOWHINE NC004 <- Declared by wayland
+
 
 class EglWaylandDisplayBase : public EglNativeDisplay
 {
@@ -27,10 +31,10 @@ public:
     virtual EGLBOOL  Terminate(EGLBOOL cleanUpNativeObjects);
     virtual EGLBOOL  Initialize();
     virtual EGLBOOL  Destroy();
-    /// Bind native display to EglDisplay. Not supported by default
-    virtual EGLBOOL  BindNativeDisplay(EGLVOID* pDisplayToBind) { return EGL_FALSE; }
-    /// Unbind native display to EglDisplay. Not supported by default
-    virtual EGLBOOL  UnbindNativeDisplay(EGLVOID* pDisplayToUnbind) { return EGL_FALSE; }
+    /// Bind native display to EglDisplay.
+    virtual EGLBOOL  BindNativeDisplay(EGLVOID* pDisplayToBind);
+    /// Unbind native display to EglDisplay.
+    virtual EGLBOOL  UnbindNativeDisplay(EGLVOID* pDisplayToUnbind);
     /// Gets the native display
     virtual EGLVOID* GetNativeDisplay() { return NULL; }
     /// Gets the GbmUtils object
@@ -48,6 +52,9 @@ protected:
 private:
     EglWaylandDisplayBase(const EglWaylandDisplayBase&);                        ///< Disallow the copy constructor
     EglWaylandDisplayBase& operator=(const EglWaylandDisplayBase&);             ///< Disallow assignment operator
+
+    wl_display*             m_pBoundWaylandDisplay;                             ///< Wayland display bound to the compositor
+    WaylandBufferBackend*   m_pWaylandBufferBackend;                            ///< Wayland buffer backend implementation
 };
 
 #endif // EGLWAYLANDDISPLAYBASE_H

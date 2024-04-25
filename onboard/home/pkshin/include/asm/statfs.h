@@ -1,48 +1,24 @@
+/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
 /*
- * Copyright (C) 2005-2011 by Wind River Systems, Inc.
+ * Copyright (C) 2012 ARM Ltd.
  *
- * SPDX-License-Identifier: MIT
- * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as
+ * published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+#ifndef __ASM_STATFS_H
+#define __ASM_STATFS_H
 
-#pragma once
+#define ARCH_PACK_COMPAT_STATFS64 __attribute__((packed,aligned(4)))
 
-#if defined (__bpf__)
-#define __MHWORDSIZE			64
-#elif defined (__arm__)
-#define __MHWORDSIZE			32
-#elif defined (__aarch64__) && defined ( __LP64__)
-#define __MHWORDSIZE			64
-#elif defined (__aarch64__)
-#define __MHWORDSIZE			32
-#else
-#include <bits/wordsize.h>
-#if defined (__WORDSIZE)
-#define __MHWORDSIZE			__WORDSIZE
-#else
-#error "__WORDSIZE is not defined"
+#include <asm-generic/statfs.h>
+
 #endif
-#endif
-
-#if __MHWORDSIZE == 32
-
-#ifdef _MIPS_SIM
-
-#if _MIPS_SIM == _ABIO32
-#include <asm/statfs-32.h>
-#elif _MIPS_SIM == _ABIN32
-#include <asm/statfs-n32.h>
-#else
-#error "Unknown _MIPS_SIM"
-#endif
-
-#else /* _MIPS_SIM is not defined */
-#include <asm/statfs-32.h>
-#endif
-
-#elif __MHWORDSIZE == 64
-#include <asm/statfs-64.h>
-#else
-#error "Unknown __WORDSIZE detected"
-#endif /* matches #if __WORDSIZE == 32 */
-  

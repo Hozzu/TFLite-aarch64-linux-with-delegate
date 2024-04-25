@@ -191,8 +191,6 @@ struct _GstVideoDecoder
 
   /*< private >*/
   gpointer padding[GST_PADDING_LARGE];
-  /*hareware decoder*/
-  gboolean hw_decoder;
 };
 
 /**
@@ -258,12 +256,12 @@ struct _GstVideoDecoder
  *                  Query handler on the sink pad. This function should
  *                  return TRUE if the query could be performed. Subclasses
  *                  should chain up to the parent implementation to invoke the
- *                  default handler. Since 1.4
+ *                  default handler. Since: 1.4
  * @src_query:      Optional.
  *                  Query handler on the source pad. This function should
  *                  return TRUE if the query could be performed. Subclasses
  *                  should chain up to the parent implementation to invoke the
- *                  default handler. Since 1.4
+ *                  default handler. Since: 1.4
  * @getcaps:        Optional.
  *                  Allows for a custom sink getcaps implementation.
  *                  If not implemented, default returns
@@ -273,7 +271,7 @@ struct _GstVideoDecoder
  *                  output buffer. By default this method is copies all meta without
  *                  tags and meta with only the "video" tag. subclasses can
  *                  implement this method and return %TRUE if the metadata is to be
- *                  copied. Since 1.6
+ *                  copied. Since: 1.6
  *
  * Subclasses can override any of the available virtual methods or not, as
  * needed. At minimum @handle_frame needs to be overridden, and @set_format
@@ -478,6 +476,9 @@ GstCaps *        gst_video_decoder_proxy_getcaps (GstVideoDecoder * decoder,
 GST_VIDEO_API
 void             gst_video_decoder_set_use_default_pad_acceptcaps (GstVideoDecoder * decoder,
                                                                    gboolean use);
+
+GST_VIDEO_API
+gboolean         gst_video_decoder_push_event (GstVideoDecoder * decoder, GstEvent * event);
 
 #ifdef G_DEFINE_AUTOPTR_CLEANUP_FUNC
 G_DEFINE_AUTOPTR_CLEANUP_FUNC(GstVideoDecoder, gst_object_unref)

@@ -1,5 +1,4 @@
 /*
- * @licence app begin@
  * SPDX license identifier: MPL-2.0
  *
  * Copyright (C) 2011-2015, BMW AG
@@ -12,7 +11,6 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/.
  *
  * For further information see http://www.genivi.org/.
- * @licence end@
  */
 
 /*!
@@ -158,7 +156,7 @@ typedef enum
     DLT_NW_TRACE_USER_DEFINED4 = 0x0C,
     DLT_NW_TRACE_USER_DEFINED5 = 0x0D,
     DLT_NW_TRACE_USER_DEFINED6 = 0x0E,
-    DLT_NW_TRACE_USER_DEFINED7 = 0x0F,
+    DLT_NW_TRACE_RESEND = 0x0F,             /**< Mark a resend */
     DLT_NW_TRACE_MAX                        /**< maximum value, used for range check */
 } DltNetworkTraceType;
 
@@ -175,9 +173,17 @@ typedef enum
     DLT_USER_MODE_MAX                       /**< maximum value, used for range check */
 } DltUserLogMode;
 
+/**
+ * Definition of Maintain Logstorage Loglevel modes
+ */
+#define DLT_MAINTAIN_LOGSTORAGE_LOGLEVEL_UNDEF -1
+#define DLT_MAINTAIN_LOGSTORAGE_LOGLEVEL_OFF    0
+#define DLT_MAINTAIN_LOGSTORAGE_LOGLEVEL_ON     1
+
 typedef float float32_t;
 typedef double float64_t;
 
+#if defined DLT_LIB_USE_UNIX_SOCKET_IPC || defined DLT_LIB_USE_VSOCK_IPC
 /**
  * Definition Library connection state
  */
@@ -187,5 +193,15 @@ typedef enum
     DLT_USER_CONNECTED,
     DLT_USER_RETRY_CONNECT
 } DltUserConnectionState;
+#endif
+
+/**
+ * Definition of timestamp types
+ */
+typedef enum
+{
+	DLT_AUTO_TIMESTAMP = 0,
+	DLT_USER_TIMESTAMP
+} DltTimestampType;
 
 #endif  /* DLT_TYPES_H */

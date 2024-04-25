@@ -1,6 +1,6 @@
-.TH MAKE 1 "28 February 2016" "GNU" "User Commands"
+.TH MAKE 1 "26 May 2023" "GNU" "User Commands"
 .SH NAME
-make \- GNU make utility to maintain groups of programs
+make \- GNU Make utility to maintain groups of programs
 .SH SYNOPSIS
 .B make
 [\fIOPTION\fR]... [\fITARGET\fR]...
@@ -26,9 +26,9 @@ To prepare to use
 .BR make ,
 you must write a file called the
 .I makefile
-that describes the relationships among files in your program, and the states
-the commands for updating each file.  In a program, typically the executable
-file is updated from object files, which are in turn made by compiling source
+that describes the relationships among files in your program, and provides
+commands for updating each file.  In a program, typically the executable file
+is updated from object files, which are in turn made by compiling source
 files.
 .LP
 Once a suitable makefile exists, each time you change some source files,
@@ -48,10 +48,10 @@ files, it issues the commands recorded in the makefile.
 .B make
 executes commands in the
 .I makefile
-to update one or more target
-.IR names ,
+to update one or more
+.IR targets ,
 where
-.I name
+.I target
 is typically a program.
 If no
 .B \-f
@@ -76,9 +76,8 @@ listing, right near other important files such as
 The first name checked,
 .IR GNUmakefile ,
 is not recommended for most makefiles.  You should use this name if you have a
-makefile that is specific to GNU
-.BR make ,
-and will not be understood by other versions of
+makefile that is specific to GNU Make, and will not be understood by other
+versions of
 .BR make .
 If
 .I makefile
@@ -130,21 +129,28 @@ are omitted, then the behavior is the same as if
 .B \-d
 was specified.
 .I FLAGS
-may be
-.I a
+may be any or all of the following names, comma- or space-separated.  Only the
+first character is significant: the rest may be omitted:
+.I all
 for all debugging output (same as using
 .BR \-d ),
-.I b
+.I basic
 for basic debugging,
-.I v
+.I verbose
 for more verbose basic debugging,
-.I i
-for showing implicit rules,
-.I j
-for details on invocation of commands, and
-.I m
-for debugging while remaking makefiles.  Use
-.I n
+.I implicit
+for showing implicit rule search operations,
+.I jobs
+for details on invocation of commands,
+.I makefile
+for debugging while remaking makefiles,
+.I print
+shows all recipes that are run even if they are silent, and
+.I why
+shows the reason
+.BR make
+decided to rebuild each target.  Use
+.I none
 to disable all previous debugging flags.
 .TP 0.5i
 \fB\-e\fR, \fB\-\-environment\-overrides\fR
@@ -197,6 +203,16 @@ If the
 option is given without an argument,
 .BR make
 will not limit the number of jobs that can run simultaneously.
+.TP 0.5i
+\fB\--jobserver-style=\fR\fIstyle\fR
+The style of jobserver to use.  The
+.I style
+may be one of
+.BR fifo ,
+.BR pipe ,
+or
+.B sem
+(Windows only).
 .TP 0.5i
 \fB\-k\fR, \fB\-\-keep\-going\fR
 Continue as much as possible after an error.
@@ -312,6 +328,26 @@ Turn off
 .BR \-w ,
 even if it was turned on implicitly.
 .TP 0.5i
+.BI \-\-shuffle "[=MODE]"
+Enable shuffling of goal and prerequisite ordering.
+.I MODE
+is one of
+.I none
+to disable shuffle mode,
+.I random
+to shuffle prerequisites in random order,
+.I reverse
+to consider prerequisites in reverse order, or an integer
+.I <seed>
+which enables
+.I random
+mode with a specific
+.I seed
+value.  If
+.I MODE
+is omitted the default is
+.IR random .
+.TP 0.5i
 \fB\-W\fR \fIfile\fR, \fB\-\-what\-if\fR=\fIfile\fR, \fB\-\-new\-file\fR=\fIfile\fR, \fB\-\-assume\-new\fR=\fIfile\fR
 Pretend that the target
 .I file
@@ -331,9 +367,7 @@ except that the modification time is changed only in the imagination of
 .B \-\-warn\-undefined\-variables
 Warn when an undefined variable is referenced.
 .SH "EXIT STATUS"
-GNU
-.B make
-exits with a status of zero if all makefiles were successfully parsed
+GNU Make exits with a status of zero if all makefiles were successfully parsed
 and no targets that were built failed.  A status of one will be returned
 if the
 .B \-q
@@ -361,9 +395,9 @@ This manual page contributed by Dennis Morse of Stanford University.
 Further updates contributed by Mike Frysinger.  It has been reworked by Roland
 McGrath.  Maintained by Paul Smith.
 .SH "COPYRIGHT"
-Copyright \(co 1992-1993, 1996-2020 Free Software Foundation, Inc.
+Copyright \(co 1992-1993, 1996-2023 Free Software Foundation, Inc.
 This file is part of
-.IR "GNU make" .
+.IR "GNU Make" .
 .LP
 GNU Make is free software; you can redistribute it and/or modify it under the
 terms of the GNU General Public License as published by the Free Software
@@ -376,4 +410,4 @@ A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 .LP
 You should have received a copy of the GNU General Public License along with
 this program.  If not, see
-.IR http://www.gnu.org/licenses/ .
+.IR https://www.gnu.org/licenses/ .

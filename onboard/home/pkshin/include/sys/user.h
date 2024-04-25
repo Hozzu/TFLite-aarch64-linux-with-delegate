@@ -1,48 +1,37 @@
-/*
- * Copyright (C) 2005-2011 by Wind River Systems, Inc.
- *
- * SPDX-License-Identifier: MIT
- * 
- */
+/* Copyright (C) 2009-2020 Free Software Foundation, Inc.
 
-#pragma once
+   This file is part of the GNU C Library.
 
-#if defined (__bpf__)
-#define __MHWORDSIZE			64
-#elif defined (__arm__)
-#define __MHWORDSIZE			32
-#elif defined (__aarch64__) && defined ( __LP64__)
-#define __MHWORDSIZE			64
-#elif defined (__aarch64__)
-#define __MHWORDSIZE			32
-#else
-#include <bits/wordsize.h>
-#if defined (__WORDSIZE)
-#define __MHWORDSIZE			__WORDSIZE
-#else
-#error "__WORDSIZE is not defined"
+   The GNU C Library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU Lesser General Public License as
+   published by the Free Software Foundation; either version 2.1 of the
+   License, or (at your option) any later version.
+
+   The GNU C Library is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Lesser General Public License for more details.
+
+   You should have received a copy of the GNU Lesser General Public
+   License along with the GNU C Library; if not, see
+   <https://www.gnu.org/licenses/>.  */
+
+#ifndef _SYS_USER_H
+#define _SYS_USER_H	1
+
+struct user_regs_struct
+{
+  unsigned long long regs[31];
+  unsigned long long sp;
+  unsigned long long pc;
+  unsigned long long pstate;
+};
+
+struct user_fpsimd_struct
+{
+  __uint128_t  vregs[32];
+  unsigned int fpsr;
+  unsigned int fpcr;
+};
+
 #endif
-#endif
-
-#if __MHWORDSIZE == 32
-
-#ifdef _MIPS_SIM
-
-#if _MIPS_SIM == _ABIO32
-#include <sys/user-32.h>
-#elif _MIPS_SIM == _ABIN32
-#include <sys/user-n32.h>
-#else
-#error "Unknown _MIPS_SIM"
-#endif
-
-#else /* _MIPS_SIM is not defined */
-#include <sys/user-32.h>
-#endif
-
-#elif __MHWORDSIZE == 64
-#include <sys/user-64.h>
-#else
-#error "Unknown __WORDSIZE detected"
-#endif /* matches #if __WORDSIZE == 32 */
-  

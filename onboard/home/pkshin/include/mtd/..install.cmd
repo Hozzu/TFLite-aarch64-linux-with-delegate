@@ -1,0 +1,1 @@
+cmd_/home/pkshin//include/mtd/.install := /bin/sh scripts/headers_install.sh /home/pkshin//include/mtd ./include/uapi/mtd inftl-user.h mtd-abi.h mtd-user.h nftl-user.h ubi-user.h; /bin/sh scripts/headers_install.sh /home/pkshin//include/mtd ./include/generated/uapi/mtd ; touch /home/pkshin//include/mtd/.install

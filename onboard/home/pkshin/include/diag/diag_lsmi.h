@@ -8,7 +8,7 @@
 DESCRIPTION
   Internal declarations for Diag Service Mapping Layer.
 
-Copyright (c)  2007-2015, 2017-2019  Qualcomm Technologies, Inc.
+Copyright (c)  2007-2015, 2017-2020  Qualcomm Technologies, Inc.
 All Rights Reserved.
 Confidential and Proprietary - Qualcomm Technologies, Inc.
 ===========================================================================*/
@@ -135,6 +135,7 @@ void diag_kill_adpl_threads(void);
 void diag_kill_diagid_threads(void);
 
 int delete_log(int type);
+int delete_qdss_log(int type);
 int diag_qdss_init();
 int diag_id_init();
 void create_qshrink_thread(void);

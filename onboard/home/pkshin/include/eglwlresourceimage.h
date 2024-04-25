@@ -1,5 +1,5 @@
 //******************************************************************************************************************************
-// Copyright (c) 2014-2018 Qualcomm Technologies, Inc.
+// Copyright (c) 2014-2018, 2020 Qualcomm Technologies, Inc.
 // All Rights Reserved.
 // Confidential and Proprietary - Qualcomm Technologies, Inc.
 //******************************************************************************************************************************
@@ -32,6 +32,7 @@ public:
                            EglWlResourceImage**  ppNewNativeImage);
 
     EGLINT GetBuffer(EglSubResource* pSubResource, EglMemoryDesc* pMemDesc);
+    EGLINT GetNativeBufferFromImage(EGLVOID** ppWlBuffer);
 
 protected:
     virtual ~EglWlResourceImage();
@@ -47,6 +48,7 @@ private:
     EGLINT  Init(EGLVOID* pClientBuffer);
     EGLVOID UpdateSubSampledInfo(EGLPIXELFORMAT eglFormat, EGLUINT planeIdx, EglSubResource* pSubResource);
     EGLVOID UpdateSubResourceInfoForSubSampledPackedBuffers(EGLPIXELFORMAT eglFormat, EglSubResource* pSubResource);
+    EGLINT  GetWLBufferFromImage(EGLVOID** ppWlBuffer);
 
     EGLUINT                  m_planeId;                           ///< YUV plane id
 };

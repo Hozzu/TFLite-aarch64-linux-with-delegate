@@ -87,10 +87,21 @@ void PortableSparseMatrixBatchVectorMultiplyAccumulate(
     int m_rows, int m_cols, const float* __restrict__ vector, int n_batch,
     float* __restrict__ result);
 
+void PortableSparseMatrixBatchVectorMultiplyAccumulate1x16(
+    const int8_t* __restrict__ matrix, const int32_t* __restrict__ segments,
+    const int32_t* __restrict__ indices, int m_rows, int m_cols,
+    const int8_t* __restrict__ vector, const int32_t* __restrict__ bias_vector,
+    int n_batch, const int32_t input_offset, const int32_t output_multiplier,
+    int32_t output_shift, const int32_t* per_channel_scale,
+    const int32_t* per_channel_shift, int32_t output_offset,
+    const int32_t output_activation_min, const int32_t output_activation_max,
+    int8_t* __restrict__ result);
+
 void PortableSparseMatrixBatchVectorMultiplyAccumulate(
     const int8_t* __restrict__ matrix, const uint8_t* ledger, const int m_rows,
     const int m_cols, const int8_t* __restrict__ vectors,
-    const float* scaling_factors, int n_batch, float* __restrict__ result);
+    const float* scaling_factors, int n_batch, float* __restrict__ result,
+    const float* per_channel_scale);
 
 // Dot product of two vectors.
 float PortableVectorVectorDotProduct(const float* vector1, const float* vector2,

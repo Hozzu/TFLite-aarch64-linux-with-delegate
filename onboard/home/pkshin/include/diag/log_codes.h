@@ -3115,7 +3115,7 @@ when       who     what, where, why
 	#define LOG_F_RESERVED_4                                  ((0xC04) + LOG_1X_BASE_C)
 	#define LOG_F_RESERVED_5                                  ((0xC05) + LOG_1X_BASE_C)
 	#define LOG_F_RESERVED_6                                  ((0xC06) + LOG_1X_BASE_C)
-
+	#define LOG_NR5G_RF_THIRD_PARTY_PA_C                      ((0xC18) + LOG_1X_BASE_C)
 
 #define LOG_IMS_ICS_LOG_STATIC_CONFIG_PACKET_INFO_C           ((0xC40) + LOG_1X_BASE_C)
 #define LOG_IMS_ICS_LOG_USER_SETTINGS_PACKET_INFO_C           ((0xC41) + LOG_1X_BASE_C)
@@ -3268,9 +3268,27 @@ when       who     what, where, why
 #define LOG_GNSS_GILE_QDR_AID_REPORT_C                        ((0xCD4) + LOG_1X_BASE_C)
 #define LOG_GNSS_PE_AUX_MEAS_SELECT_INFO_C                    ((0xCD5) + LOG_1X_BASE_C)
 #define LOG_GNSS_PE_ENV_BEARING_VALIDATION_INFO_C             ((0xCD6) + LOG_1X_BASE_C)
+#define LOG_GNSS_EP_FACTORY_INFO                              ((0xCD7) + LOG_1X_BASE_C)
+#define LOG_NAS_REGISTRATION_STATUS_INFO_C                    ((0xCD8) + LOG_1X_BASE_C)
+#define LOG_MCS_RT_SAR_EXT_FRAME_C                            ((0xCD9) + LOG_1X_BASE_C)
+#define LOG_GNSS_EP_QWES_DATA_INFO                            ((0xCDA) + LOG_1X_BASE_C)
+#define LOG_GNSS_EP_SAP_INS_PARAMS_REPORT_C                   ((0xCDB) + LOG_1X_BASE_C)
+#define LOG_RFLM_QLNK_CDR_RESULTS_C                           ((0xCDC) + LOG_1X_BASE_C)
+#define LOG_TOOLS_DIAG_HEALTH_REPORT_C                        ((0xCDD) + LOG_1X_BASE_C)
+#define LOG_QLINK_IU_QSLEEP_VETO_C                            ((0xCDE) + LOG_1X_BASE_C)
+#define LOG_RFLM_QLINK_2G_3G_VETO_QSLEEP_C                    ((0xCDF) + LOG_1X_BASE_C)
+#define LOG_GNSS_GAL_E5B_MEASUREMENT_REPORT_C                 ((0xCE0) + LOG_1X_BASE_C)
+#define LOG_GNSS_GPS_QZSS_SBAS_L5_MEASUREMENT_REPORT_C        ((0xCE1) + LOG_1X_BASE_C)
+#define LOG_IPA_UL_ACK_MGMNT_C                                ((0xCE2) + LOG_1X_BASE_C)
+#define LOG_IMS_ISM_SERVICE_STATUS_INFO_C                     ((0xCE3) + LOG_1X_BASE_C)
+#define LOG_RF_FAST_RXAGC_C                                   ((0xCE4) + LOG_1X_BASE_C)
+#define LOG_MPPM_GLOBAL_INFO_C                                ((0xCE5) + LOG_1X_BASE_C)
+#define LOG_MCPM_CMGR_CP2X_INFO_C                             ((0xCE6) + LOG_1X_BASE_C)
+#define LOG_CXM_SPMI_DATA_C                                   ((0xCE7) + LOG_1X_BASE_C)
+#define LOG_GNSS_LATENCY_REPORT_C                             ((0xCE8) + LOG_1X_BASE_C)
 
 /* The last defined DMSS log code */
- #define LOG_1X_LAST_C                                        ((0xCD6) + LOG_1X_BASE_C)
+#define LOG_1X_LAST_C                                        ((0xCE8) + LOG_1X_BASE_C)
 
 /* This is only here for old (pre equipment ID update) logging code */
 #define LOG_LAST_C                                          ( LOG_1X_LAST_C & 0xFFF )

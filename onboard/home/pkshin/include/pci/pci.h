@@ -1,7 +1,7 @@
 /*
  *	The PCI Library
  *
- *	Copyright (c) 1997--2018 Martin Mares <mj@ucw.cz>
+ *	Copyright (c) 1997--2020 Martin Mares <mj@ucw.cz>
  *
  *	Can be freely distributed and used under the terms of the GNU GPL.
  */
@@ -16,7 +16,7 @@
 #include "header.h"
 #include "types.h"
 
-#define PCI_LIB_VERSION 0x030602
+#define PCI_LIB_VERSION 0x030604
 
 #ifndef PCI_ABI
 #define PCI_ABI
@@ -41,7 +41,8 @@ enum pci_access_type {
   PCI_ACCESS_OBSD_DEVICE,		/* OpenBSD /dev/pci */
   PCI_ACCESS_DUMP,			/* Dump file */
   PCI_ACCESS_DARWIN,			/* Darwin */
-  PCI_ACCESS_SYLIXOS_DEVICE,   /* SylixOS pci */
+  PCI_ACCESS_SYLIXOS_DEVICE,		/* SylixOS pci */
+  PCI_ACCESS_HURD,			/* GNU/Hurd */
   PCI_ACCESS_MAX
 };
 
@@ -150,6 +151,7 @@ struct pci_dev {
   int hdrtype;				/* Cached low 7 bits of header type, -1 if unknown */
   void *aux;				/* Auxiliary data */
   struct pci_property *properties;	/* A linked list of extra properties */
+  struct pci_cap *last_cap;		/* Last capability in the list */
 };
 
 #define PCI_ADDR_IO_MASK (~(pciaddr_t) 0x3)
@@ -211,6 +213,8 @@ struct pci_cap {
 #define PCI_CAP_EXTENDED	2	/* PCIe extended capabilities */
 
 struct pci_cap *pci_find_cap(struct pci_dev *, unsigned int id, unsigned int type) PCI_ABI;
+struct pci_cap *pci_find_cap_nr(struct pci_dev *, unsigned int id, unsigned int type,
+                                unsigned int *cap_number) PCI_ABI;
 
 /*
  *	Filters

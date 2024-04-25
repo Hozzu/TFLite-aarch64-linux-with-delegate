@@ -20,6 +20,7 @@ limitations under the License.
 #include <cstdint>
 #include <cstring>
 #include <string>
+#include <variant>
 #include <vector>
 
 #include "absl/types/variant.h"
@@ -70,16 +71,16 @@ struct Object {
 
 // @return true if object is a reference.
 inline bool IsRef(const Object& object) {
-  return !absl::holds_alternative<ObjectData>(object.object);
+  return !std::holds_alternative<ObjectData>(object.object);
 }
 
 inline ObjectRef GetRef(const Object& object) {
-  auto ref = absl::get_if<ObjectRef>(&object.object);
+  auto ref = std::get_if<ObjectRef>(&object.object);
   return ref ? *ref : kInvalidObjectRef;
 }
 
 inline const ObjectData* GetData(const Object& object) {
-  return absl::get_if<ObjectData>(&object.object);
+  return std::get_if<ObjectData>(&object.object);
 }
 
 inline size_t ByteSizeOf(const Object& object);
@@ -114,7 +115,7 @@ struct ObjectSizer {
 }  // namespace internal_object
 
 inline size_t NumElements(const ObjectSize& size) {
-  return absl::visit(internal_object::ObjectSizer{}, size);
+  return std::visit(internal_object::ObjectSizer{}, size);
 }
 
 inline size_t ByteSizeOf(const Object& object) {

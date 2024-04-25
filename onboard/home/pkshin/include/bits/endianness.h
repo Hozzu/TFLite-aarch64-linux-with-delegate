@@ -1,48 +1,15 @@
-/*
- * Copyright (C) 2005-2011 by Wind River Systems, Inc.
- *
- * SPDX-License-Identifier: MIT
- * 
- */
+#ifndef _BITS_ENDIANNESS_H
+#define _BITS_ENDIANNESS_H 1
 
-#pragma once
-
-#if defined (__bpf__)
-#define __MHWORDSIZE			64
-#elif defined (__arm__)
-#define __MHWORDSIZE			32
-#elif defined (__aarch64__) && defined ( __LP64__)
-#define __MHWORDSIZE			64
-#elif defined (__aarch64__)
-#define __MHWORDSIZE			32
-#else
-#include <bits/wordsize.h>
-#if defined (__WORDSIZE)
-#define __MHWORDSIZE			__WORDSIZE
-#else
-#error "__WORDSIZE is not defined"
-#endif
+#ifndef _BITS_ENDIAN_H
+# error "Never use <bits/endianness.h> directly; include <endian.h> instead."
 #endif
 
-#if __MHWORDSIZE == 32
-
-#ifdef _MIPS_SIM
-
-#if _MIPS_SIM == _ABIO32
-#include <bits/endianness-32.h>
-#elif _MIPS_SIM == _ABIN32
-#include <bits/endianness-n32.h>
+/* AArch64 has selectable endianness.  */
+#ifdef __AARCH64EB__
+# define __BYTE_ORDER __BIG_ENDIAN
 #else
-#error "Unknown _MIPS_SIM"
+# define __BYTE_ORDER __LITTLE_ENDIAN
 #endif
 
-#else /* _MIPS_SIM is not defined */
-#include <bits/endianness-32.h>
-#endif
-
-#elif __MHWORDSIZE == 64
-#include <bits/endianness-64.h>
-#else
-#error "Unknown __WORDSIZE detected"
-#endif /* matches #if __WORDSIZE == 32 */
-  
+#endif /* bits/endianness.h */

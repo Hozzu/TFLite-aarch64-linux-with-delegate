@@ -1,0 +1,1 @@
+cmd_/home/pkshin//include/linux/can/.install := /bin/sh scripts/headers_install.sh /home/pkshin//include/linux/can ./include/uapi/linux/can bcm.h error.h gw.h netlink.h raw.h vxcan.h; /bin/sh scripts/headers_install.sh /home/pkshin//include/linux/can ./include/generated/uapi/linux/can ; touch /home/pkshin//include/linux/can/.install

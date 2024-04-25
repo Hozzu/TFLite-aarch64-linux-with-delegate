@@ -1,48 +1,97 @@
+/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
 /*
- * Copyright (C) 2005-2011 by Wind River Systems, Inc.
+ * Based on arch/arm/include/asm/ptrace.h
  *
- * SPDX-License-Identifier: MIT
- * 
+ * Copyright (C) 1996-2003 Russell King
+ * Copyright (C) 2012 ARM Ltd.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as
+ * published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+#ifndef __ASM_PTRACE_H
+#define __ASM_PTRACE_H
 
-#pragma once
+#include <linux/types.h>
 
-#if defined (__bpf__)
-#define __MHWORDSIZE			64
-#elif defined (__arm__)
-#define __MHWORDSIZE			32
-#elif defined (__aarch64__) && defined ( __LP64__)
-#define __MHWORDSIZE			64
-#elif defined (__aarch64__)
-#define __MHWORDSIZE			32
-#else
-#include <bits/wordsize.h>
-#if defined (__WORDSIZE)
-#define __MHWORDSIZE			__WORDSIZE
-#else
-#error "__WORDSIZE is not defined"
-#endif
-#endif
+#include <asm/hwcap.h>
 
-#if __MHWORDSIZE == 32
 
-#ifdef _MIPS_SIM
+/*
+ * PSR bits
+ */
+#define PSR_MODE_EL0t	0x00000000
+#define PSR_MODE_EL1t	0x00000004
+#define PSR_MODE_EL1h	0x00000005
+#define PSR_MODE_EL2t	0x00000008
+#define PSR_MODE_EL2h	0x00000009
+#define PSR_MODE_EL3t	0x0000000c
+#define PSR_MODE_EL3h	0x0000000d
+#define PSR_MODE_MASK	0x0000000f
 
-#if _MIPS_SIM == _ABIO32
-#include <asm/ptrace-32.h>
-#elif _MIPS_SIM == _ABIN32
-#include <asm/ptrace-n32.h>
-#else
-#error "Unknown _MIPS_SIM"
-#endif
+/* AArch32 CPSR bits */
+#define PSR_MODE32_BIT		0x00000010
 
-#else /* _MIPS_SIM is not defined */
-#include <asm/ptrace-32.h>
-#endif
+/* AArch64 SPSR bits */
+#define PSR_F_BIT	0x00000040
+#define PSR_I_BIT	0x00000080
+#define PSR_A_BIT	0x00000100
+#define PSR_D_BIT	0x00000200
+#define PSR_SSBS_BIT	0x00001000
+#define PSR_PAN_BIT	0x00400000
+#define PSR_UAO_BIT	0x00800000
+#define PSR_Q_BIT	0x08000000
+#define PSR_V_BIT	0x10000000
+#define PSR_C_BIT	0x20000000
+#define PSR_Z_BIT	0x40000000
+#define PSR_N_BIT	0x80000000
 
-#elif __MHWORDSIZE == 64
-#include <asm/ptrace-64.h>
-#else
-#error "Unknown __WORDSIZE detected"
-#endif /* matches #if __WORDSIZE == 32 */
-  
+/*
+ * Groups of PSR bits
+ */
+#define PSR_f		0xff000000	/* Flags		*/
+#define PSR_s		0x00ff0000	/* Status		*/
+#define PSR_x		0x0000ff00	/* Extension		*/
+#define PSR_c		0x000000ff	/* Control		*/
+
+
+#ifndef __ASSEMBLY__
+
+/*
+ * User structures for general purpose, floating point and debug registers.
+ */
+struct user_pt_regs {
+	__u64		regs[31];
+	__u64		sp;
+	__u64		pc;
+	__u64		pstate;
+};
+
+struct user_fpsimd_state {
+	__uint128_t	vregs[32];
+	__u32		fpsr;
+	__u32		fpcr;
+	__u32		__reserved[2];
+};
+
+struct user_hwdebug_state {
+	__u32		dbg_info;
+	__u32		pad;
+	struct {
+		__u64	addr;
+		__u32	ctrl;
+		__u32	pad;
+	}		dbg_regs[16];
+};
+
+#endif /* __ASSEMBLY__ */
+
+#endif /* __ASM_PTRACE_H */

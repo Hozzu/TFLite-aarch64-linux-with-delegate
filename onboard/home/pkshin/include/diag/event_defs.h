@@ -2816,11 +2816,8 @@ typedef enum
   EVENT_F_RESERVED_71                                                            = 0xC8A, /* 3210 */
   EVENT_F_RESERVED_72                                                            = 0xC8B, /* 3211 */
   EVENT_F_RESERVED_73                                                            = 0xC8C, /* 3212 */
-  EVENT_F_RESERVED_74                                                            = 0xC8D, /* 3213 */
   EVENT_NAS_MM5G_TIMER_START                                                     = 0xC8D, /* 3213 */
-  EVENT_F_RESERVED_75                                                            = 0xC8E, /* 3214 */
   EVENT_NAS_MM5G_TIMER_STOP                                                      = 0xC8E, /* 3214 */
-  EVENT_F_RESERVED_76                                                            = 0xC8F, /* 3215 */
   EVENT_NAS_MM5G_TIMER_EXPIRY                                                    = 0xC8F, /* 3215 */
   EVENT_F_RESERVED_77                                                            = 0xC90, /* 3216 */
   EVENT_WLAN_HW_MODE                                                             = 0xC91, /* 3217 */
@@ -2872,7 +2869,20 @@ typedef enum
   EVENT_F_RESERVED_87                                                            = 0xCBF, /* 3263 */
   EVENT_IPSEC_CHILD_SA_REKEY_START_V2                                            = 0xCC0, /* 3264 */
   EVENT_IPSEC_CHILD_SA_REKEY_DONE_V2                                             = 0xCC1, /* 3265 */
-  EVENT_LAST_ID    = 0xCC1,
+  EVENT_LTE_ML1_L2NR_MISALIGNED_GAP                                              = 0xCC2, /* 3266 */
+  EVENT_LTE_RRC_HO_SUCCESS                                                       = 0xCC3, /* 3267 */
+  EVENT_F_RESERVED_88                                                            = 0xCC4, /* 3268 */
+  EVENT_NR5G_RRC_IRAT_RESEL_FROM_NR_START                                        = 0xCC5, /* 3269 */
+  EVENT_NR5G_RRC_IRAT_HO_FROM_NR_START                                           = 0xCC6, /* 3270 */
+  EVENT_NR5G_RRC_IRAT_REDIR_FROM_NR_START                                        = 0xCC7, /* 3271 */
+  EVENT_NR5G_RRC_IRAT_REDIR_FROM_NR_END                                          = 0xCC8, /* 3272 */
+  EVENT_NR5G_RRC_IRAT_RESEL_FROM_NR_END                                          = 0xCC9, /* 3273 */
+  EVENT_NR5G_RRC_IRAT_HO_FROM_NR_FAILURE                                         = 0xCCA, /* 3274 */
+  EVENT_NR5G_RRC_IRAT_HO_FROM_NR_END                                             = 0xCCB, /* 3275 */
+  EVENT_LTE_RRC_IOT_RADIO_LINK_FAILURE_STAT                                      = 0xCCC, /* 3276 */
+  EVENT_NAS_NON_BLOCKED_PLMN_SEARCH_TIMER_STARTED                                = 0xCCD, /* 3277 */
+
+  EVENT_LAST_ID    = 0xCCD,
 
   EVENT_MAX_ID     = 0x0FFF
 } event_id_enum_type;

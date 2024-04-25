@@ -1,0 +1,1 @@
+cmd_/home/pkshin//include/linux/isdn/.install := /bin/sh scripts/headers_install.sh /home/pkshin//include/linux/isdn ./include/uapi/linux/isdn capicmd.h; /bin/sh scripts/headers_install.sh /home/pkshin//include/linux/isdn ./include/generated/uapi/linux/isdn ; touch /home/pkshin//include/linux/isdn/.install

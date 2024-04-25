@@ -19,7 +19,7 @@
 class EglWaylandFormatUtils final
 {
 public:
-    static EGLUINT        IsFormatSupportedRenderTarget(EGLPIXELFORMAT eglFormat);
+    static EGLUINT        GetGbmFormatFromEglFormatRenderable(EGLPIXELFORMAT eglFormat);
     static EGLUINT        GetGbmFormatFromEglFormat(EGLPIXELFORMAT eglFormat);
     static EGLUINT        GetGbmFormatFromWaylandBackendFormat(EGLUINT waylandBackendFormat);
     static EGLPIXELFORMAT GetEglFormatFromGbmFormat(EGLUINT gbmFormat);

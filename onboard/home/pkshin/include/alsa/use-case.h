@@ -42,6 +42,8 @@
 extern "C" {
 #endif
 
+#include <alsa/asoundlib.h>
+
 /**
  *  \defgroup ucm Use Case Interface
  *  The ALSA Use Case manager interface.
@@ -84,7 +86,7 @@ extern "C" {
  *  + Get the TQ parameter for each use case verb, use case device and
  *     modifier.
  *  + Get the ALSA master playback and capture volume/switch kcontrols
- *     for each use case.
+ *     or mixer elements for each use case.
  */
 
 
@@ -280,9 +282,13 @@ int snd_use_case_get_list(snd_use_case_mgr_t *uc_mgr,
  *   - PlaybackCTL
  *      - playback control device name
  *   - PlaybackVolume
- *      - playback control volume ID string
+ *      - playback control volume identifier string
+ *	- can be parsed using snd_use_case_parse_ctl_elem_id()
  *   - PlaybackSwitch
- *      - playback control switch ID string
+ *      - playback control switch identifier string
+ *	- can be parsed using snd_use_case_parse_ctl_elem_id()
+ *   - PlaybackPriority
+ *      - priority value (1-10000), default value is 100, higher value means lower priority
  *   - CaptureRate
  *      - capture device sample rate
  *   - CaptureChannels
@@ -290,17 +296,35 @@ int snd_use_case_get_list(snd_use_case_mgr_t *uc_mgr,
  *   - CaptureCTL
  *      - capture control device name
  *   - CaptureVolume
- *      - capture control volume ID string
+ *      - capture control volume identifier string
+ *	- can be parsed using snd_use_case_parse_ctl_elem_id()
  *   - CaptureSwitch
- *      - capture control switch ID string
+ *      - capture control switch identifier string
+ *	- can be parsed using snd_use_case_parse_ctl_elem_id()
+ *   - CapturePriority
+ *      - priority value (1-10000), default value is 100, higher value means lower priority
  *   - PlaybackMixer
  *      - name of playback mixer
- *   - PlaybackMixerID
- *      - mixer playback ID
+ *   - PlaybackMixerElem
+ *      - mixer element playback identifier
+ *	- can be parsed using snd_use_case_parse_selem_id()
+ *   - PlaybackMasterElem
+ *      - mixer element playback identifier for the master control
+ *   - PlaybackMasterType
+ *      - type of the master volume control
+ *      - Valid values: "soft" (software attenuation)
  *   - CaptureMixer
  *      - name of capture mixer
- *   - CaptureMixerID
- *      - mixer capture ID
+ *   - CaptureMixerElem
+ *      - mixer element capture identifier
+ *	- can be parsed using snd_use_case_parse_selem_id()
+ *   - CaptureMasterElem
+ *      - mixer element playback identifier for the master control
+ *   - CaptureMasterType
+ *      - type of the master volume control
+ *      - Valid values: "soft" (software attenuation)
+ *   - EDIDFile
+ *      - Path to EDID file for HDMI devices
  *   - JackControl, JackDev, JackHWMute
  *      - Jack information for a device. The jack status can be reported via
  *        a kcontrol and/or via an input device. **JackControl** is the
@@ -320,6 +344,10 @@ int snd_use_case_get_list(snd_use_case_mgr_t *uc_mgr,
  *        trick upper software layers to e.g. automatically mute speakers when
  *        headphones are plugged in, but that's application policy
  *        configuration that doesn't belong to UCM configuration files.
+ *   - MinBufferLevel
+ *	- This is used on platform where reported buffer level is not accurate.
+ *	  E.g. "512", which holds 512 samples in device buffer. Note: this will
+ *	  increase latency.
  */
 int snd_use_case_get(snd_use_case_mgr_t *uc_mgr,
                      const char *identifier,
@@ -371,8 +399,25 @@ int snd_use_case_set(snd_use_case_mgr_t *uc_mgr,
  * \param uc_mgr Returned use case manager pointer
  * \param card_name Sound card name.
  * \return zero if success, otherwise a negative error code
+ *
+ * By default only first card is used when the driver card
+ * name or long name is passed in the card_name argument.
+ *
+ * The "strict:" prefix in the card_name defines that
+ * there is no driver name / long name matching. The straight
+ * configuration is used.
+ *
+ * The "hw:" prefix in the card_name will load the configuration
+ * for the ALSA card specified by the card index (value) or
+ * the card string identificator.
+ *
+ * The sound card might be also composed from several physical
+ * sound cards (for the default and strict card_name).
+ * The application cannot expect that the device names will refer
+ * only one ALSA sound card in this case.
  */
-int snd_use_case_mgr_open(snd_use_case_mgr_t **uc_mgr, const char *card_name);
+int snd_use_case_mgr_open(snd_use_case_mgr_t **uc_mgr,
+                          const char *card_name);
 
 
 /**
@@ -421,6 +466,28 @@ static __inline__ int snd_use_case_verb_list(snd_use_case_mgr_t *uc_mgr,
 {
 	return snd_use_case_get_list(uc_mgr, "_verbs", list);
 }
+
+/**
+ * \brief Parse control element identifier
+ * \param elem_id Element identifier
+ * \param ucm_id Use case identifier
+ * \param value String value to be parsed
+ * \return Zero if success, otherwise a negative error code
+ */
+int snd_use_case_parse_ctl_elem_id(snd_ctl_elem_id_t *dst,
+				   const char *ucm_id,
+				   const char *value);
+
+/**
+ * \brief Parse mixer element identifier
+ * \param dst Simple mixer element identifier
+ * \param ucm_id Use case identifier
+ * \param value String value to be parsed
+ * \return Zero if success, otherwise a negative error code
+ */
+int snd_use_case_parse_selem_id(snd_mixer_selem_id_t *dst,
+				const char *ucm_id,
+				const char *value);
 
 /**
  *  \}

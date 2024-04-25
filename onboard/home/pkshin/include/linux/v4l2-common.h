@@ -79,19 +79,6 @@
 /* Current composing area plus all padding pixels */
 #define V4L2_SEL_TGT_COMPOSE_PADDED	0x0103
 
-/* Selection flags */
-#define V4L2_SEL_FLAG_GE		(1 << 0)
-#define V4L2_SEL_FLAG_LE		(1 << 1)
-#define V4L2_SEL_FLAG_KEEP_CONFIG	(1 << 2)
-
-struct v4l2_edid {
-	__u32 pad;
-	__u32 start_block;
-	__u32 blocks;
-	__u32 reserved[5];
-	__u8  *edid;
-};
-
 /* Backward compatibility target definitions --- to be removed. */
 #define V4L2_SEL_TGT_CROP_ACTIVE	V4L2_SEL_TGT_CROP
 #define V4L2_SEL_TGT_COMPOSE_ACTIVE	V4L2_SEL_TGT_COMPOSE
@@ -100,9 +87,22 @@ struct v4l2_edid {
 #define V4L2_SUBDEV_SEL_TGT_CROP_BOUNDS	V4L2_SEL_TGT_CROP_BOUNDS
 #define V4L2_SUBDEV_SEL_TGT_COMPOSE_BOUNDS V4L2_SEL_TGT_COMPOSE_BOUNDS
 
+/* Selection flags */
+#define V4L2_SEL_FLAG_GE		(1 << 0)
+#define V4L2_SEL_FLAG_LE		(1 << 1)
+#define V4L2_SEL_FLAG_KEEP_CONFIG	(1 << 2)
+
 /* Backward compatibility flag definitions --- to be removed. */
 #define V4L2_SUBDEV_SEL_FLAG_SIZE_GE	V4L2_SEL_FLAG_GE
 #define V4L2_SUBDEV_SEL_FLAG_SIZE_LE	V4L2_SEL_FLAG_LE
 #define V4L2_SUBDEV_SEL_FLAG_KEEP_CONFIG V4L2_SEL_FLAG_KEEP_CONFIG
+
+struct v4l2_edid {
+	__u32 pad;
+	__u32 start_block;
+	__u32 blocks;
+	__u32 reserved[5];
+	__u8  *edid;
+};
 
 #endif /* __V4L2_COMMON__ */

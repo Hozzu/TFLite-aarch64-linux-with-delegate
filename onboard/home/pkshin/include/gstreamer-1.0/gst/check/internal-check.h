@@ -76,8 +76,8 @@ CK_CPPSTART
 
 /* check version numbers */
 #define CHECK_MAJOR_VERSION (0)
-#define CHECK_MINOR_VERSION (10)
-#define CHECK_MICRO_VERSION (0)
+#define CHECK_MINOR_VERSION (9)
+#define CHECK_MICRO_VERSION (14)
 CK_DLL_EXP /*extern*/ int CK_EXPORT check_major_version;
 CK_DLL_EXP /*extern*/ int CK_EXPORT check_minor_version;
 CK_DLL_EXP /*extern*/ int CK_EXPORT check_micro_version;

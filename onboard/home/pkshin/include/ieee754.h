@@ -1,48 +1,170 @@
-/*
- * Copyright (C) 2005-2011 by Wind River Systems, Inc.
- *
- * SPDX-License-Identifier: MIT
- * 
- */
+/* Copyright (C) 1992-2020 Free Software Foundation, Inc.
+   This file is part of the GNU C Library.
 
-#pragma once
+   The GNU C Library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU Lesser General Public
+   License as published by the Free Software Foundation; either
+   version 2.1 of the License, or (at your option) any later version.
 
-#if defined (__bpf__)
-#define __MHWORDSIZE			64
-#elif defined (__arm__)
-#define __MHWORDSIZE			32
-#elif defined (__aarch64__) && defined ( __LP64__)
-#define __MHWORDSIZE			64
-#elif defined (__aarch64__)
-#define __MHWORDSIZE			32
+   The GNU C Library is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Lesser General Public License for more details.
+
+   You should have received a copy of the GNU Lesser General Public
+   License along with the GNU C Library; if not, see
+   <https://www.gnu.org/licenses/>.  */
+
+#ifndef _IEEE754_H
+#define _IEEE754_H 1
+
+#include <features.h>
+
+#include <bits/endian.h>
+
+__BEGIN_DECLS
+
+union ieee754_float
+  {
+    float f;
+
+    /* This is the IEEE 754 single-precision format.  */
+    struct
+      {
+#if	__BYTE_ORDER == __BIG_ENDIAN
+	unsigned int negative:1;
+	unsigned int exponent:8;
+	unsigned int mantissa:23;
+#endif				/* Big endian.  */
+#if	__BYTE_ORDER == __LITTLE_ENDIAN
+	unsigned int mantissa:23;
+	unsigned int exponent:8;
+	unsigned int negative:1;
+#endif				/* Little endian.  */
+      } ieee;
+
+    /* This format makes it easier to see if a NaN is a signalling NaN.  */
+    struct
+      {
+#if	__BYTE_ORDER == __BIG_ENDIAN
+	unsigned int negative:1;
+	unsigned int exponent:8;
+	unsigned int quiet_nan:1;
+	unsigned int mantissa:22;
+#endif				/* Big endian.  */
+#if	__BYTE_ORDER == __LITTLE_ENDIAN
+	unsigned int mantissa:22;
+	unsigned int quiet_nan:1;
+	unsigned int exponent:8;
+	unsigned int negative:1;
+#endif				/* Little endian.  */
+      } ieee_nan;
+  };
+
+#define IEEE754_FLOAT_BIAS	0x7f /* Added to exponent.  */
+
+
+union ieee754_double
+  {
+    double d;
+
+    /* This is the IEEE 754 double-precision format.  */
+    struct
+      {
+#if	__BYTE_ORDER == __BIG_ENDIAN
+	unsigned int negative:1;
+	unsigned int exponent:11;
+	/* Together these comprise the mantissa.  */
+	unsigned int mantissa0:20;
+	unsigned int mantissa1:32;
+#endif				/* Big endian.  */
+#if	__BYTE_ORDER == __LITTLE_ENDIAN
+	/* Together these comprise the mantissa.  */
+	unsigned int mantissa1:32;
+	unsigned int mantissa0:20;
+	unsigned int exponent:11;
+	unsigned int negative:1;
+#endif				/* Little endian.  */
+      } ieee;
+
+    /* This format makes it easier to see if a NaN is a signalling NaN.  */
+    struct
+      {
+#if	__BYTE_ORDER == __BIG_ENDIAN
+	unsigned int negative:1;
+	unsigned int exponent:11;
+	unsigned int quiet_nan:1;
+	/* Together these comprise the mantissa.  */
+	unsigned int mantissa0:19;
+	unsigned int mantissa1:32;
 #else
-#include <bits/wordsize.h>
-#if defined (__WORDSIZE)
-#define __MHWORDSIZE			__WORDSIZE
+	/* Together these comprise the mantissa.  */
+	unsigned int mantissa1:32;
+	unsigned int mantissa0:19;
+	unsigned int quiet_nan:1;
+	unsigned int exponent:11;
+	unsigned int negative:1;
+#endif
+      } ieee_nan;
+  };
+
+#define IEEE754_DOUBLE_BIAS	0x3ff /* Added to exponent.  */
+
+
+union ieee854_long_double
+  {
+    long double d;
+
+    /* This is the IEEE 854 quad-precision format.  */
+    struct
+      {
+#if	__BYTE_ORDER == __BIG_ENDIAN
+	unsigned int negative:1;
+	unsigned int exponent:15;
+	/* Together these comprise the mantissa.  */
+	unsigned int mantissa0:16;
+	unsigned int mantissa1:32;
+	unsigned int mantissa2:32;
+	unsigned int mantissa3:32;
+#endif				/* Big endian.  */
+#if	__BYTE_ORDER == __LITTLE_ENDIAN
+	/* Together these comprise the mantissa.  */
+	unsigned int mantissa3:32;
+	unsigned int mantissa2:32;
+	unsigned int mantissa1:32;
+	unsigned int mantissa0:16;
+	unsigned int exponent:15;
+	unsigned int negative:1;
+#endif				/* Little endian.  */
+      } ieee;
+
+    /* This format makes it easier to see if a NaN is a signalling NaN.  */
+    struct
+      {
+#if	__BYTE_ORDER == __BIG_ENDIAN
+	unsigned int negative:1;
+	unsigned int exponent:15;
+	unsigned int quiet_nan:1;
+	/* Together these comprise the mantissa.  */
+	unsigned int mantissa0:15;
+	unsigned int mantissa1:32;
+	unsigned int mantissa2:32;
+	unsigned int mantissa3:32;
 #else
-#error "__WORDSIZE is not defined"
+	/* Together these comprise the mantissa.  */
+	unsigned int mantissa3:32;
+	unsigned int mantissa2:32;
+	unsigned int mantissa1:32;
+	unsigned int mantissa0:15;
+	unsigned int quiet_nan:1;
+	unsigned int exponent:15;
+	unsigned int negative:1;
 #endif
-#endif
+      } ieee_nan;
+  };
 
-#if __MHWORDSIZE == 32
+#define IEEE854_LONG_DOUBLE_BIAS 0x3fff /* Added to exponent.  */
 
-#ifdef _MIPS_SIM
+__END_DECLS
 
-#if _MIPS_SIM == _ABIO32
-#include <ieee754-32.h>
-#elif _MIPS_SIM == _ABIN32
-#include <ieee754-n32.h>
-#else
-#error "Unknown _MIPS_SIM"
-#endif
-
-#else /* _MIPS_SIM is not defined */
-#include <ieee754-32.h>
-#endif
-
-#elif __MHWORDSIZE == 64
-#include <ieee754-64.h>
-#else
-#error "Unknown __WORDSIZE detected"
-#endif /* matches #if __WORDSIZE == 32 */
-  
+#endif /* ieee754.h */

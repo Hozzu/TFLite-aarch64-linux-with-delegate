@@ -1,0 +1,1 @@
+cmd_/home/pkshin//include/scsi/.install := /bin/sh scripts/headers_install.sh /home/pkshin//include/scsi ./include/uapi/scsi cxlflash_ioctl.h scsi_bsg_fc.h scsi_netlink.h scsi_netlink_fc.h; /bin/sh scripts/headers_install.sh /home/pkshin//include/scsi ./include/generated/uapi/scsi ; touch /home/pkshin//include/scsi/.install

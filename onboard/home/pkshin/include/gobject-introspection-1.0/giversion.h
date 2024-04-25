@@ -26,8 +26,8 @@
 G_BEGIN_DECLS
 
 #define GI_MAJOR_VERSION 1
-#define GI_MINOR_VERSION 60
-#define GI_MICRO_VERSION 2
+#define GI_MINOR_VERSION 62
+#define GI_MICRO_VERSION 0
 
 #define GI_CHECK_VERSION(major,minor,micro) \
     (GI_MAJOR_VERSION > (major) || \

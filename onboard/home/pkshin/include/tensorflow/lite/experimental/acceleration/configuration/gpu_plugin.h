@@ -15,35 +15,11 @@ limitations under the License.
 #ifndef TENSORFLOW_LITE_EXPERIMENTAL_ACCELERATION_CONFIGURATION_GPU_PLUGIN_H_
 #define TENSORFLOW_LITE_EXPERIMENTAL_ACCELERATION_CONFIGURATION_GPU_PLUGIN_H_
 
-// This file provides the GpuPlugin class, which implements the
-// TFLite Delegate Plugin for the GPU Delegate.
+// This header file is no longer experimental.
+// Please use the non-experimental file instead.
 
-#include <string>
+#include "tensorflow/lite/acceleration/configuration/gpu_plugin.h"  // IWYU pragma: export
 
-#include "tensorflow/lite/delegates/gpu/delegate.h"
-#include "tensorflow/lite/experimental/acceleration/configuration/configuration_generated.h"
-#include "tensorflow/lite/experimental/acceleration/configuration/delegate_registry.h"
-
-namespace tflite {
-namespace delegates {
-
-class GpuPlugin : public DelegatePluginInterface {
- public:
-  explicit GpuPlugin(const TFLiteSettings& tflite_settings);
-  static std::unique_ptr<DelegatePluginInterface> New(
-      const TFLiteSettings& acceleration);
-
-  TfLiteDelegatePtr Create() override;
-  int GetDelegateErrno(TfLiteDelegate* from_delegate) override;
-  const TfLiteGpuDelegateOptionsV2& Options();
-
- private:
-  TfLiteGpuDelegateOptionsV2 options_;
-  std::string cache_dir_;
-  std::string model_token_;
-};
-
-}  // namespace delegates
-}  // namespace tflite
+// IWYU pragma: private, include "third_party/tensorflow/lite/acceleration/configuration/gpu_plugin.h"
 
 #endif  // TENSORFLOW_LITE_EXPERIMENTAL_ACCELERATION_CONFIGURATION_GPU_PLUGIN_H_

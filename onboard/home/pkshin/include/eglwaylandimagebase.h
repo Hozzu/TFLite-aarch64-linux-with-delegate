@@ -28,7 +28,7 @@ class EglWaylandImageBase : public EglNativeImage
 public:
     virtual EGLBOOL Destroy();
     virtual EGLINT  GetBuffer(EglSubResource* pSubResource, EglMemoryDesc* pMemDesc) = 0;
-    virtual EGLVOID CacheOperation(EglCacheCommands cacheCommand);
+    virtual EGLVOID CacheOperation(EglCacheCommands cacheCommand, EGLVOID* pCpuAddress);
     virtual EGLBOOL IsProtected();
 
     /// Get the native buffer backing the image

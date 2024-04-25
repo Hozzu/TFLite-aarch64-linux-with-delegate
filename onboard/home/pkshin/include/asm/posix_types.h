@@ -1,48 +1,11 @@
-/*
- * Copyright (C) 2005-2011 by Wind River Systems, Inc.
- *
- * SPDX-License-Identifier: MIT
- * 
- */
+/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+#ifndef __ASM_POSIX_TYPES_H
+#define __ASM_POSIX_TYPES_H
 
-#pragma once
+typedef unsigned short __kernel_old_uid_t;
+typedef unsigned short __kernel_old_gid_t;
+#define __kernel_old_uid_t __kernel_old_uid_t
 
-#if defined (__bpf__)
-#define __MHWORDSIZE			64
-#elif defined (__arm__)
-#define __MHWORDSIZE			32
-#elif defined (__aarch64__) && defined ( __LP64__)
-#define __MHWORDSIZE			64
-#elif defined (__aarch64__)
-#define __MHWORDSIZE			32
-#else
-#include <bits/wordsize.h>
-#if defined (__WORDSIZE)
-#define __MHWORDSIZE			__WORDSIZE
-#else
-#error "__WORDSIZE is not defined"
-#endif
-#endif
+#include <asm-generic/posix_types.h>
 
-#if __MHWORDSIZE == 32
-
-#ifdef _MIPS_SIM
-
-#if _MIPS_SIM == _ABIO32
-#include <asm/posix_types-32.h>
-#elif _MIPS_SIM == _ABIN32
-#include <asm/posix_types-n32.h>
-#else
-#error "Unknown _MIPS_SIM"
-#endif
-
-#else /* _MIPS_SIM is not defined */
-#include <asm/posix_types-32.h>
-#endif
-
-#elif __MHWORDSIZE == 64
-#include <asm/posix_types-64.h>
-#else
-#error "Unknown __WORDSIZE detected"
-#endif /* matches #if __WORDSIZE == 32 */
-  
+#endif /*  __ASM_POSIX_TYPES_H */

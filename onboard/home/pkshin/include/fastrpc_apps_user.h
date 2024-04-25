@@ -12,18 +12,6 @@
 #include <errno.h>
 
 /*
- * Macros defined for environment search paths
- *
- */
-#define ADSP_LIBRARY_PATH "ADSP_LIBRARY_PATH"
-#define DSP_LIBRARY_PATH  "DSP_LIBRARY_PATH"
-#define ADSP_AVS_PATH     "ADSP_AVS_CFG_PATH"
-
-#define DSP_MOUNT_LOCATION  "/dsp/"
-#define VENDOR_DSP_LOCATION "/vendor/dsp/"
-#define VENDOR_DOM_LOCATION "/vendor/dsp/xdsp/"
-
-/*
  * Enum defined for fastrpc User Properties
  * @fastrpc_properties: Object of enum
  * Enum values corresponds to array indices

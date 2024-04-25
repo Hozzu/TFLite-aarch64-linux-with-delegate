@@ -1,48 +1,40 @@
-/*
- * Copyright (C) 2005-2011 by Wind River Systems, Inc.
- *
- * SPDX-License-Identifier: MIT
- * 
- */
+/* Copyright (C) 1995-2020 Free Software Foundation, Inc.
+   This file is part of the GNU C Library.
 
-#pragma once
+   The GNU C Library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU Lesser General Public
+   License as published by the Free Software Foundation; either
+   version 2.1 of the License, or (at your option) any later version.
 
-#if defined (__bpf__)
-#define __MHWORDSIZE			64
-#elif defined (__arm__)
-#define __MHWORDSIZE			32
-#elif defined (__aarch64__) && defined ( __LP64__)
-#define __MHWORDSIZE			64
-#elif defined (__aarch64__)
-#define __MHWORDSIZE			32
-#else
-#include <bits/wordsize.h>
-#if defined (__WORDSIZE)
-#define __MHWORDSIZE			__WORDSIZE
-#else
-#error "__WORDSIZE is not defined"
-#endif
+   The GNU C Library is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Lesser General Public License for more details.
+
+   You should have received a copy of the GNU Lesser General Public
+   License along with the GNU C Library; if not, see
+   <https://www.gnu.org/licenses/>.  */
+
+#ifndef _SYS_IPC_H
+# error "Never use <bits/ipc.h> directly; include <sys/ipc.h> instead."
 #endif
 
-#if __MHWORDSIZE == 32
+#include <bits/types.h>
 
-#ifdef _MIPS_SIM
+/* Mode bits for `msgget', `semget', and `shmget'.  */
+#define IPC_CREAT	01000		/* Create key if key does not exist. */
+#define IPC_EXCL	02000		/* Fail if key exists.  */
+#define IPC_NOWAIT	04000		/* Return error on wait.  */
 
-#if _MIPS_SIM == _ABIO32
-#include <bits/ipc-32.h>
-#elif _MIPS_SIM == _ABIN32
-#include <bits/ipc-n32.h>
-#else
-#error "Unknown _MIPS_SIM"
+/* Control commands for `msgctl', `semctl', and `shmctl'.  */
+#define IPC_RMID	0		/* Remove identifier.  */
+#define IPC_SET		1		/* Set `ipc_perm' options.  */
+#define IPC_STAT	2		/* Get `ipc_perm' options.  */
+#ifdef __USE_GNU
+# define IPC_INFO	3		/* See ipcs.  */
 #endif
 
-#else /* _MIPS_SIM is not defined */
-#include <bits/ipc-32.h>
-#endif
+/* Special key values.  */
+#define IPC_PRIVATE	((__key_t) 0)	/* Private key.  */
 
-#elif __MHWORDSIZE == 64
-#include <bits/ipc-64.h>
-#else
-#error "Unknown __WORDSIZE detected"
-#endif /* matches #if __WORDSIZE == 32 */
-  
+#include <bits/ipc-perm.h>

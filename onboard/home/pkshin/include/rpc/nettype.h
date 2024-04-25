@@ -1,1 +1,0 @@
-../tirpc/rpc/nettype.h

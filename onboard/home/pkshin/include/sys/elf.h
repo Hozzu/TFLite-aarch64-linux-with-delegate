@@ -1,48 +1,26 @@
-/*
- * Copyright (C) 2005-2011 by Wind River Systems, Inc.
- *
- * SPDX-License-Identifier: MIT
- * 
- */
+/* Copyright (C) 1996-2020 Free Software Foundation, Inc.
 
-#pragma once
+   This file is part of the GNU C Library.
 
-#if defined (__bpf__)
-#define __MHWORDSIZE			64
-#elif defined (__arm__)
-#define __MHWORDSIZE			32
-#elif defined (__aarch64__) && defined ( __LP64__)
-#define __MHWORDSIZE			64
-#elif defined (__aarch64__)
-#define __MHWORDSIZE			32
-#else
-#include <bits/wordsize.h>
-#if defined (__WORDSIZE)
-#define __MHWORDSIZE			__WORDSIZE
-#else
-#error "__WORDSIZE is not defined"
-#endif
-#endif
+   The GNU C Library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU Lesser General Public
+   License as published by the Free Software Foundation; either
+   version 2.1 of the License, or (at your option) any later version.
 
-#if __MHWORDSIZE == 32
+   The GNU C Library is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Lesser General Public License for more details.
 
-#ifdef _MIPS_SIM
+   You should have received a copy of the GNU Lesser General Public
+   License along with the GNU C Library; if not, see
+   <https://www.gnu.org/licenses/>.  */
 
-#if _MIPS_SIM == _ABIO32
-#include <sys/elf-32.h>
-#elif _MIPS_SIM == _ABIN32
-#include <sys/elf-n32.h>
-#else
-#error "Unknown _MIPS_SIM"
-#endif
+#ifndef _SYS_ELF_H
+#define _SYS_ELF_H	1
 
-#else /* _MIPS_SIM is not defined */
-#include <sys/elf-32.h>
-#endif
+#warning "This header is obsolete; use <sys/procfs.h> instead."
 
-#elif __MHWORDSIZE == 64
-#include <sys/elf-64.h>
-#else
-#error "Unknown __WORDSIZE detected"
-#endif /* matches #if __WORDSIZE == 32 */
-  
+#include <sys/procfs.h>
+
+#endif	/* sys/elf.h */

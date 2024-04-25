@@ -16,4 +16,4 @@
 #define PCI_USE_LIBKMOD
 #define PCI_HAVE_HWDB
 #define PCI_SHARED_LIB
-#define PCILIB_VERSION "3.6.2"
+#define PCILIB_VERSION "3.6.4"

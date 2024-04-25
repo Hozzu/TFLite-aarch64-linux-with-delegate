@@ -59,7 +59,7 @@ public:
         /* Enable/Disable/Set refresh rate dynamically */
         CONFIGURE_DYN_REFRESH_RATE = 18,
         CONTROL_PARTIAL_UPDATE = 19,   // Provides ability to enable/disable partial update
-        TOGGLE_SCREEN_UPDATES = 20, // Provides ability to set the panel brightness
+        TOGGLE_SCREEN_UPDATES = 20, // Provides ability to pause/resume display updates
         SET_FRAME_DUMP_CONFIG = 21,  // Provides ability to set the frame dump config
         SET_S3D_MODE = 22, // Set the 3D mode as specified in msm_hdmi_modes.h
         CONNECT_HDMI_CLIENT = 23,  // Connect HDMI CEC HAL Client
@@ -85,6 +85,7 @@ public:
         GET_DSI_CLK = 43, // Get DSI Clk.
         GET_SUPPORTED_DSI_CLK = 44, // Get supported DSI Clk.
         SET_COLOR_MODE_FROM_CLIENT = 45, // Overrides the QDCM mode using the given mode ID
+        SET_PANEL_LUMINANCE = 46, // Set Panel Luminance attributes.
         COMMAND_LIST_END = 400,
     };
 

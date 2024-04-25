@@ -1,5 +1,4 @@
 /*
- * @licence app begin@
  * SPDX license identifier: MPL-2.0
  *
  * Copyright (C) 2011-2015, BMW AG
@@ -12,7 +11,6 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/.
  *
  * For further information see http://www.genivi.org/.
- * @licence end@
  */
 
 /*!
@@ -71,6 +69,7 @@
 #define DLT_USER_MACROS_H
 
 #include "dlt_version.h"
+#include "dlt_types.h"
 
 /**
  * \defgroup userapi DLT User API
@@ -125,6 +124,13 @@
  */
 #define DLT_UNREGISTER_APP_FLUSH_BUFFERED_LOGS() do { \
         (void)dlt_unregister_app_flush_buffered_logs(); } while (0)
+
+/**
+ * To Get application ID.
+ * @Param APPID character pointer of minimum 4 bytes
+ */
+#define DLT_GET_APPID(APPID) do{\
+    dlt_get_appid(APPID);} while(0)
 
 /**
  * Register context (with default log level and default trace status)
@@ -196,23 +202,52 @@
  * Send log message with variable list of messages (intended for verbose mode)
  * @param CONTEXT object containing information about one special logging context
  * @param LOGLEVEL the log level of the log message
- * @param ARGS variable list of arguments
+ * @param ... variable list of arguments
  * @note To avoid the MISRA warning "The comma operator has been used outside a for statement"
- *       use a semicolon instead of a comma to separate the ARGS.
+ *       use a semicolon instead of a comma to separate the __VA_ARGS__.
  *       Example: DLT_LOG(hContext, DLT_LOG_INFO, DLT_STRING("Hello world"); DLT_INT(123));
  */
 #ifdef _MSC_VER
 /* DLT_LOG is not supported by MS Visual C++ */
 /* use function interface instead            */
 #else
-#   define DLT_LOG(CONTEXT, LOGLEVEL, ARGS ...) \
+#   define DLT_LOG(CONTEXT, LOGLEVEL, ...) \
     do { \
         DltContextData log_local; \
         int dlt_local; \
         dlt_local = dlt_user_log_write_start(&CONTEXT, &log_local, LOGLEVEL); \
         if (dlt_local == DLT_RETURN_TRUE) \
         { \
-            ARGS; \
+            __VA_ARGS__; \
+            (void)dlt_user_log_write_finish(&log_local); \
+        } \
+    } while (0)
+#endif
+
+/**
+ * Send log message with variable list of messages (intended for verbose mode)
+ * @param CONTEXT object containing information about one special logging context
+ * @param LOGLEVEL the log level of the log message
+ * @param TS timestamp to be used for log message
+ * @param ... variable list of arguments
+ * @note To avoid the MISRA warning "The comma operator has been used outside a for statement"
+ *       use a semicolon instead of a comma to separate the __VA_ARGS__.
+ *       Example: DLT_LOG_TS(hContext, DLT_LOG_INFO, timestamp, DLT_STRING("Hello world"); DLT_INT(123));
+ */
+#ifdef _MSC_VER
+/* DLT_LOG_TS is not supported by MS Visual C++ */
+/* use function interface instead            */
+#else
+#   define DLT_LOG_TS(CONTEXT, LOGLEVEL, TS, ...) \
+    do { \
+        DltContextData log_local; \
+        int dlt_local; \
+        dlt_local = dlt_user_log_write_start(&CONTEXT, &log_local, LOGLEVEL); \
+        if (dlt_local == DLT_RETURN_TRUE) \
+        { \
+            __VA_ARGS__; \
+            log_local.use_timestamp = DLT_USER_TIMESTAMP; \
+            log_local.user_timestamp = (uint32_t) TS; \
             (void)dlt_user_log_write_finish(&log_local); \
         } \
     } while (0)
@@ -223,25 +258,57 @@
  * @param CONTEXT object containing information about one special logging context
  * @param LOGLEVEL the log level of the log message
  * @param MSGID the message id of log message
- * @param ARGS variable list of arguments:
+ * @param ... variable list of arguments
  * calls to DLT_STRING(), DLT_BOOL(), DLT_FLOAT32(), DLT_FLOAT64(),
  * DLT_INT(), DLT_UINT(), DLT_RAW()
  * @note To avoid the MISRA warning "The comma operator has been used outside a for statement"
- *       use a semicolon instead of a comma to separate the ARGS.
+ *       use a semicolon instead of a comma to separate the __VA_ARGS__.
  *       Example: DLT_LOG_ID(hContext, DLT_LOG_INFO, 0x1234, DLT_STRING("Hello world"); DLT_INT(123));
  */
 #ifdef _MSC_VER
 /* DLT_LOG_ID is not supported by MS Visual C++ */
 /* use function interface instead               */
 #else
-#   define DLT_LOG_ID(CONTEXT, LOGLEVEL, MSGID, ARGS ...) \
+#   define DLT_LOG_ID(CONTEXT, LOGLEVEL, MSGID, ...) \
     do { \
         DltContextData log_local; \
         int dlt_local; \
         dlt_local = dlt_user_log_write_start_id(&CONTEXT, &log_local, LOGLEVEL, MSGID); \
         if (dlt_local == DLT_RETURN_TRUE) \
         { \
-            ARGS; \
+            __VA_ARGS__; \
+            (void)dlt_user_log_write_finish(&log_local); \
+        } \
+    } while (0)
+#endif
+
+/**
+ * Send log message with variable list of messages (intended for non-verbose mode)
+ * @param CONTEXT object containing information about one special logging context
+ * @param LOGLEVEL the log level of the log message
+ * @param MSGID the message id of log message
+ * @param TS timestamp to be used for log message
+ * @param ... variable list of arguments
+ * calls to DLT_STRING(), DLT_BOOL(), DLT_FLOAT32(), DLT_FLOAT64(),
+ * DLT_INT(), DLT_UINT(), DLT_RAW()
+ * @note To avoid the MISRA warning "The comma operator has been used outside a for statement"
+ *       use a semicolon instead of a comma to separate the __VA_ARGS__.
+ *       Example: DLT_LOG_ID_TS(hContext, DLT_LOG_INFO, 0x1234, timestamp, DLT_STRING("Hello world"); DLT_INT(123));
+ */
+#ifdef _MSC_VER
+/* DLT_LOG_ID_TS is not supported by MS Visual C++ */
+/* use function interface instead               */
+#else
+#   define DLT_LOG_ID_TS(CONTEXT, LOGLEVEL, MSGID, TS, ...) \
+    do { \
+        DltContextData log_local; \
+        int dlt_local; \
+        dlt_local = dlt_user_log_write_start_id(&CONTEXT, &log_local, LOGLEVEL, MSGID); \
+        if (dlt_local == DLT_RETURN_TRUE) \
+        { \
+            __VA_ARGS__; \
+            log_local.use_timestamp = DLT_USER_TIMESTAMP; \
+            log_local.user_timestamp = (uint32_t) TS; \
             (void)dlt_user_log_write_finish(&log_local); \
         } \
     } while (0)
@@ -255,11 +322,33 @@
     (void)dlt_user_log_write_string(&log_local, TEXT)
 
 /**
+ * Add string parameter with given length to the log messsage.
+ * The string in @a TEXT does not need to be null-terminated, but
+ * the copied string will be null-terminated at its destination
+ * in the message buffer.
+ * @param TEXT ASCII string
+ * @param LEN length in bytes to take from @a TEXT
+ */
+#define DLT_SIZED_STRING(TEXT, LEN) \
+    (void)dlt_user_log_write_sized_string(&log_local, TEXT, LEN)
+
+/**
  * Add constant string parameter to the log messsage.
  * @param TEXT Constant ASCII string
  */
 #define DLT_CSTRING(TEXT) \
     (void)dlt_user_log_write_constant_string(&log_local, TEXT)
+
+/**
+ * Add constant string parameter with given length to the log messsage.
+ * The string in @a TEXT does not need to be null-terminated, but
+ * the copied string will be null-terminated at its destination
+ * in the message buffer.
+ * @param TEXT Constant ASCII string
+ * @param LEN length in bytes to take from @a TEXT
+ */
+#define DLT_SIZED_CSTRING(TEXT, LEN) \
+    (void)dlt_user_log_write_sized_constant_string(&log_local, TEXT, LEN)
 
 /**
  * Add utf8-encoded string parameter to the log messsage.
@@ -269,11 +358,128 @@
     (void)dlt_user_log_write_utf8_string(&log_local, TEXT)
 
 /**
+ * Add utf8-encoded string parameter with given length to the log messsage.
+ * The string in @a TEXT does not need to be null-terminated, but
+ * the copied string will be null-terminated at its destination
+ * in the message buffer.
+ * @param TEXT UTF8-encoded string
+ * @param LEN length in bytes to take from @a TEXT
+ */
+#define DLT_SIZED_UTF8(TEXT, LEN) \
+    (void)dlt_user_log_write_sized_utf8_string(&log_local, TEXT, LEN)
+
+/**
+ * Add constant utf8-encoded string parameter to the log messsage.
+ * @param TEXT Constant UTF8-encoded string
+ */
+#define DLT_CUTF8(TEXT) \
+    (void)dlt_user_log_write_constant_utf8_string(&log_local, TEXT)
+
+/**
+ * Add constant utf8-encoded string parameter with given length to the log messsage.
+ * The string in @a TEXT does not need to be null-terminated, but
+ * the copied string will be null-terminated at its destination
+ * in the message buffer.
+ * @param TEXT Constant UTF8-encoded string
+ * @param LEN length in bytes to take from @a TEXT
+ */
+#define DLT_SIZED_CUTF8(TEXT, LEN) \
+    (void)dlt_user_log_write_sized_constant_utf8_string(&log_local, TEXT, LEN)
+
+/**
+ * Add string parameter with "name" attribute to the log messsage.
+ * @param TEXT ASCII string
+ * @param NAME "name" attribute
+ */
+#define DLT_STRING_ATTR(TEXT, NAME) \
+    (void)dlt_user_log_write_string_attr(&log_local, TEXT, NAME)
+
+/**
+ * Add string parameter with given length and "name" attribute to the log messsage.
+ * The string in @a TEXT does not need to be null-terminated, but
+ * the copied string will be null-terminated at its destination
+ * in the message buffer.
+ * @param TEXT ASCII string
+ * @param LEN length in bytes to take from @a TEXT
+ * @param NAME "name" attribute
+ */
+#define DLT_SIZED_STRING_ATTR(TEXT, LEN, NAME) \
+    (void)dlt_user_log_write_sized_string_attr(&log_local, TEXT, LEN, NAME)
+
+/**
+ * Add constant string parameter with "name" attribute to the log messsage.
+ * @param TEXT Constant ASCII string
+ * @param NAME "name" attribute
+ */
+#define DLT_CSTRING_ATTR(TEXT, NAME) \
+    (void)dlt_user_log_write_constant_string_attr(&log_local, TEXT, NAME)
+
+/**
+ * Add constant string parameter with given length and "name" attribute to the log messsage.
+ * The string in @a TEXT does not need to be null-terminated, but
+ * the copied string will be null-terminated at its destination
+ * in the message buffer.
+ * @param TEXT Constant ASCII string
+ * @param LEN length in bytes to take from @a TEXT
+ * @param NAME "name" attribute
+ */
+#define DLT_SIZED_CSTRING_ATTR(TEXT, LEN, NAME) \
+    (void)dlt_user_log_write_sized_constant_string_attr(&log_local, TEXT, LEN, NAME)
+
+/**
+ * Add utf8-encoded string parameter with "name" attribute to the log messsage.
+ * @param TEXT UTF8-encoded string
+ * @param NAME "name" attribute
+ */
+#define DLT_UTF8_ATTR(TEXT, NAME) \
+    (void)dlt_user_log_write_utf8_string_attr(&log_local, TEXT, NAME)
+
+/**
+ * Add utf8-encoded string parameter with given length and "name" attribute to the log messsage.
+ * The string in @a TEXT does not need to be null-terminated, but
+ * the copied string will be null-terminated at its destination
+ * in the message buffer.
+ * @param TEXT UTF8-encoded string
+ * @param LEN length in bytes to take from @a TEXT
+ * @param NAME "name" attribute
+ */
+#define DLT_SIZED_UTF8_ATTR(TEXT, LEN, NAME) \
+    (void)dlt_user_log_write_sized_utf8_string_attr(&log_local, TEXT, LEN, ATTR)
+
+/**
+ * Add constant utf8-encoded string parameter with "name" attribute to the log messsage.
+ * @param TEXT Constant UTF8-encoded string
+ * @param NAME "name" attribute
+ */
+#define DLT_CUTF8_ATTR(TEXT, NAME) \
+    (void)dlt_user_log_write_constant_utf8_string_attr(&log_local, TEXT, NAME)
+
+/**
+ * Add constant utf8-encoded string parameter with given length and "name" attribute to the log messsage.
+ * The string in @a TEXT does not need to be null-terminated, but
+ * the copied string will be null-terminated at its destination
+ * in the message buffer.
+ * @param TEXT Constant UTF8-encoded string
+ * @param LEN length in bytes to take from @a TEXT
+ * @param NAME "name" attribute
+ */
+#define DLT_SIZED_CUTF8_ATTR(TEXT, LEN, NAME) \
+    (void)dlt_user_log_write_sized_constant_utf8_string_attr(&log_local, TEXT, LEN, NAME)
+
+/**
  * Add boolean parameter to the log messsage.
  * @param BOOL_VAR Boolean value (mapped to uint8)
  */
 #define DLT_BOOL(BOOL_VAR) \
     (void)dlt_user_log_write_bool(&log_local, BOOL_VAR)
+
+/**
+ * Add boolean parameter with "name" attribute to the log messsage.
+ * @param BOOL_VAR Boolean value (mapped to uint8)
+ * @param NAME "name" attribute
+ */
+#define DLT_BOOL_ATTR(BOOL_VAR, NAME) \
+    (void)dlt_user_log_write_bool_attr(&log_local, BOOL_VAR, NAME)
 
 /**
  * Add float32 parameter to the log messsage.
@@ -288,6 +494,24 @@
  */
 #define DLT_FLOAT64(FLOAT64_VAR) \
     (void)dlt_user_log_write_float64(&log_local, FLOAT64_VAR)
+
+/**
+ * Add float32 parameter with attributes to the log messsage.
+ * @param FLOAT32_VAR Float32 value (mapped to float)
+ * @param NAME "name" attribute
+ * @param UNIT "unit" attribute
+ */
+#define DLT_FLOAT32_ATTR(FLOAT32_VAR, NAME, UNIT) \
+    (void)dlt_user_log_write_float32_attr(&log_local, FLOAT32_VAR, NAME, UNIT)
+
+/**
+ * Add float64 parameter with attributes to the log messsage.
+ * @param FLOAT64_VAR Float64 value (mapped to double)
+ * @param NAME "name" attribute
+ * @param UNIT "unit" attribute
+ */
+#define DLT_FLOAT64_ATTR(FLOAT64_VAR, NAME, UNIT) \
+    (void)dlt_user_log_write_float64_attr(&log_local, FLOAT64_VAR, NAME, UNIT)
 
 /**
  * Add integer parameter to the log messsage.
@@ -309,6 +533,27 @@
     (void)dlt_user_log_write_int64(&log_local, INT_VAR)
 
 /**
+ * Add integer parameter with attributes to the log messsage.
+ * @param INT_VAR integer value
+ * @param NAME "name" attribute
+ * @param UNIT "unit" attribute
+ */
+#define DLT_INT_ATTR(INT_VAR, NAME, UNIT) \
+    (void)dlt_user_log_write_int_attr(&log_local, INT_VAR, NAME, UNIT)
+
+#define DLT_INT8_ATTR(INT_VAR, NAME, UNIT) \
+    (void)dlt_user_log_write_int8_attr(&log_local, INT_VAR, NAME, UNIT)
+
+#define DLT_INT16_ATTR(INT_VAR, NAME, UNIT) \
+    (void)dlt_user_log_write_int16_attr(&log_local, INT_VAR, NAME, UNIT)
+
+#define DLT_INT32_ATTR(INT_VAR, NAME, UNIT) \
+    (void)dlt_user_log_write_int32_attr(&log_local, INT_VAR, NAME, UNIT)
+
+#define DLT_INT64_ATTR(INT_VAR, NAME, UNIT) \
+    (void)dlt_user_log_write_int64_attr(&log_local, INT_VAR, NAME, UNIT)
+
+/**
  * Add unsigned integer parameter to the log messsage.
  * @param UINT_VAR unsigned integer value
  */
@@ -326,6 +571,27 @@
 
 #define DLT_UINT64(UINT_VAR) \
     (void)dlt_user_log_write_uint64(&log_local, UINT_VAR)
+
+/**
+ * Add unsigned integer parameter with attributes to the log messsage.
+ * @param UINT_VAR unsigned integer value
+ * @param NAME "name" attribute
+ * @param UNIT "unit" attribute
+ */
+#define DLT_UINT_ATTR(UINT_VAR, NAME, UNIT) \
+    (void)dlt_user_log_write_uint_attr(&log_local, UINT_VAR, NAME, UNIT)
+
+#define DLT_UINT8_ATTR(UINT_VAR, NAME, UNIT) \
+    (void)dlt_user_log_write_uint8_attr(&log_local, UINT_VAR, NAME, UNIT)
+
+#define DLT_UINT16_ATTR(UINT_VAR, NAME, UNIT) \
+    (void)dlt_user_log_write_uint16_attr(&log_local, UINT_VAR, NAME, UNIT)
+
+#define DLT_UINT32_ATTR(UINT_VAR, NAME, UNIT) \
+    (void)dlt_user_log_write_uint32_attr(&log_local, UINT_VAR, NAME, UNIT)
+
+#define DLT_UINT64_ATTR(UINT_VAR, NAME, UNIT) \
+    (void)dlt_user_log_write_uint64_attr(&log_local, UINT_VAR, NAME, UNIT)
 
 /**
  * Add binary memory block to the log messages.
@@ -346,6 +612,15 @@
     (void)dlt_user_log_write_uint8_formatted(&log_local, UINT_VAR, DLT_FORMAT_BIN8)
 #define DLT_BIN16(UINT_VAR) \
     (void)dlt_user_log_write_uint16_formatted(&log_local, UINT_VAR, DLT_FORMAT_BIN16)
+
+/**
+ * Add binary memory block with "name" attribute to the log messages.
+ * @param BUF pointer to memory block
+ * @param LEN length of memory block
+ * @param NAME "name" attribute
+ */
+#define DLT_RAW_ATTR(BUF, LEN, NAME) \
+    (void)dlt_user_log_write_raw_attr(&log_local, BUF, LEN, NAME)
 
 /**
  * Architecture independent macro to print pointers

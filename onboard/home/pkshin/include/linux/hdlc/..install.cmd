@@ -1,0 +1,1 @@
+cmd_/home/pkshin//include/linux/hdlc/.install := /bin/sh scripts/headers_install.sh /home/pkshin//include/linux/hdlc ./include/uapi/linux/hdlc ioctl.h; /bin/sh scripts/headers_install.sh /home/pkshin//include/linux/hdlc ./include/generated/uapi/linux/hdlc ; touch /home/pkshin//include/linux/hdlc/.install

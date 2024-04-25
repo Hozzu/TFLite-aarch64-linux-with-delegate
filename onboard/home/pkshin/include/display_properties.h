@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2018 - 2019, The Linux Foundation. All rights reserved.
+* Copyright (c) 2018 - 2020 The Linux Foundation. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are
@@ -48,7 +48,6 @@
 #define DISABLE_ROTATOR_DOWNSCALE_PROP       DISPLAY_PROP("disable_rotator_downscale")
 // Enables rotator for UI
 #define ENABLE_ROTATOR_UI_PROP               DISPLAY_PROP("enable_rotator_ui")
-#define ROTATOR_USE_PANEL_FPS_PROP           DISPLAY_PROP("rotator_use_panel_fps")
 #define DISABLE_DECIMATION_PROP              DISPLAY_PROP("disable_decimation")
 #define PRIMARY_MIXER_STAGES_PROP            DISPLAY_PROP("primary_mixer_stages")
 #define EXTERNAL_MIXER_STAGES_PROP           DISPLAY_PROP("external_mixer_stages")
@@ -98,7 +97,6 @@
 #define DISABLE_FBID_CACHE                   DISPLAY_PROP("disable_fbid_cache")
 #define DISABLE_HOTPLUG_BWCHECK              DISPLAY_PROP("disable_hotplug_bwcheck")
 #define DISABLE_MASK_LAYER_HINT              DISPLAY_PROP("disable_mask_layer_hint")
-#define ENABLE_SKIP_BOTTOM_SOLID_LAYER       DISPLAY_PROP("enable_skip_bottom_solid_layer")
 
 #define DISABLE_HDR_LUT_GEN                  DISPLAY_PROP("disable_hdr_lut_gen")
 #define ENABLE_DEFAULT_COLOR_MODE            DISPLAY_PROP("enable_default_color_mode")
@@ -117,14 +115,21 @@
 #define QDCM_MODE_COMBINE_PROP               DISPLAY_PROP("qdcm.mode_combine")
 #define PREFER_MULTIRECT_PROP                DISPLAY_PROP("prefer_multirect")
 #define DROP_SKEWED_VSYNC                    DISPLAY_PROP("drop_skewed_vsync")
+#define DISABLE_FAST_PATH                    DISPLAY_PROP("disable_fast_path")
 #define BUILTIN_BASEID_AND_SIZE_PROP         DISPLAY_PROP("builtin_baseid_and_size")
 #define PLUGGABLE_BASEID_AND_SIZE_PROP       DISPLAY_PROP("pluggable_baseid_and_size")
 #define VIRTUAL_BASEID_AND_SIZE_PROP         DISPLAY_PROP("virtual_baseid_and_size")
+#define ENABLE_QDCM_DIAG                     DISPLAY_PROP("enable_qdcm_diag")
 #define QDCM_DISABLE_FACTORY_MODE_PROP       DISPLAY_PROP("qdcm.disable_factory_mode")
+#define DISABLE_DEFER_POWER_STATE            DISPLAY_PROP("disable_defer_power_state")
 
 #define ZERO_SWAP_INTERVAL                   "vendor.debug.egl.swapinterval"
 #define ENABLE_OPTIMIZE_REFRESH              DISPLAY_PROP("enable_optimize_refresh")
+#define ENABLE_ASYNC_POWERMODE               DISPLAY_PROP("enable_async_powermode")
+#define DISABLE_UI_3D_TONEMAP                DISPLAY_PROP("disable_ui_3d_tonemap")
 #define DISABLE_PARALLEL_CACHE               DISPLAY_PROP("disable_parallel_cache")
-#define MAX_ROTATOR_FPS_PROP                 DISPLAY_PROP("max_rotator_fps")
+#define ENABLE_FORCE_SPLIT                   DISPLAY_PROP("enable_force_split")
+#define DISABLE_IDLE_TIME_VIDEO              DISPLAY_PROP("disable_idle_time_video")
+#define DISABLE_IDLE_TIME_HDR                DISPLAY_PROP("disable_idle_time_hdr")
 
 #endif  // __DISPLAY_PROPERTIES_H__

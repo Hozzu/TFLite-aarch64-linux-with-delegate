@@ -1,5 +1,4 @@
 /*
- * @licence app begin@
  * SPDX license identifier: MPL-2.0
  *
  * Copyright (C) 2011-2015, BMW AG
@@ -12,7 +11,6 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/.
  *
  * For further information see http://www.genivi.org/.
- * @licence end@
  */
 
 /* DO NOT EDIT! GENERATED AUTOMATICALLY! */
@@ -20,11 +18,11 @@
 #define __DLT_VERSION_H_
 
 #define _DLT_PACKAGE_VERSION_STATE "STABLE"
-#define _DLT_PACKAGE_VERSION "2.18.0"
+#define _DLT_PACKAGE_VERSION "2.18.7"
 #define _DLT_PACKAGE_MAJOR_VERSION "2"
 #define _DLT_PACKAGE_MINOR_VERSION "18"
-#define _DLT_PACKAGE_PATCH_LEVEL "0"
-#define _DLT_PACKAGE_REVISION ""
+#define _DLT_PACKAGE_PATCH_LEVEL "7"
+#define _DLT_PACKAGE_REVISION "v2.18.7"
 
 #ifdef DLT_SYSTEMD_ENABLE
 #define _DLT_SYSTEMD_ENABLE "+SYSTEMD"

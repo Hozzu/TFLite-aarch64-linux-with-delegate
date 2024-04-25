@@ -1,48 +1,61 @@
-/*
- * Copyright (C) 2005-2011 by Wind River Systems, Inc.
- *
- * SPDX-License-Identifier: MIT
- * 
- */
+/* O_*, F_*, FD_* bit values for the AArch64 Linux ABI.
+   Copyright (C) 2011-2020 Free Software Foundation, Inc.
 
-#pragma once
+   This file is part of the GNU C Library.
 
-#if defined (__bpf__)
-#define __MHWORDSIZE			64
-#elif defined (__arm__)
-#define __MHWORDSIZE			32
-#elif defined (__aarch64__) && defined ( __LP64__)
-#define __MHWORDSIZE			64
-#elif defined (__aarch64__)
-#define __MHWORDSIZE			32
-#else
-#include <bits/wordsize.h>
-#if defined (__WORDSIZE)
-#define __MHWORDSIZE			__WORDSIZE
-#else
-#error "__WORDSIZE is not defined"
-#endif
+   The GNU C Library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU Lesser General Public
+   License as published by the Free Software Foundation; either
+   version 2.1 of the License, or (at your option) any later version.
+
+   The GNU C Library is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Lesser General Public License for more details.
+
+   You should have received a copy of the GNU Lesser General Public
+   License along with the GNU C Library.  If not, see
+   <https://www.gnu.org/licenses/>.  */
+
+#ifndef	_FCNTL_H
+# error "Never use <bits/fcntl.h> directly; include <fcntl.h> instead."
 #endif
 
-#if __MHWORDSIZE == 32
+#define __O_DIRECTORY	 040000
+#define __O_NOFOLLOW	0100000
+#define __O_DIRECT	0200000
 
-#ifdef _MIPS_SIM
-
-#if _MIPS_SIM == _ABIO32
-#include <bits/fcntl-32.h>
-#elif _MIPS_SIM == _ABIN32
-#include <bits/fcntl-n32.h>
+#ifdef __ILP32__
+# define __O_LARGEFILE	0400000
 #else
-#error "Unknown _MIPS_SIM"
+# define __O_LARGEFILE	0
 #endif
 
-#else /* _MIPS_SIM is not defined */
-#include <bits/fcntl-32.h>
+#ifdef __LP64__
+# define F_GETLK64	5
+# define F_SETLK64	6
+# define F_SETLKW64	7
 #endif
 
-#elif __MHWORDSIZE == 64
-#include <bits/fcntl-64.h>
-#else
-#error "Unknown __WORDSIZE detected"
-#endif /* matches #if __WORDSIZE == 32 */
-  
+struct flock
+  {
+    short int l_type;	/* Type of lock: F_RDLCK, F_WRLCK, or F_UNLCK.	*/
+    short int l_whence;	/* Where `l_start' is relative to (like `lseek').  */
+    __off_t l_start;	/* Offset where the lock begins.  */
+    __off_t l_len;	/* Size of the locked area; zero means until EOF.  */
+    __pid_t l_pid;	/* Process holding the lock.  */
+  };
+
+#ifdef __USE_LARGEFILE64
+struct flock64
+  {
+    short int l_type;	/* Type of lock: F_RDLCK, F_WRLCK, or F_UNLCK.	*/
+    short int l_whence;	/* Where `l_start' is relative to (like `lseek').  */
+    __off64_t l_start;	/* Offset where the lock begins.  */
+    __off64_t l_len;	/* Size of the locked area; zero means until EOF.  */
+    __pid_t l_pid;	/* Process holding the lock.  */
+  };
+#endif
+
+/* Include generic Linux declarations.  */
+#include <bits/fcntl-linux.h>

@@ -1,5 +1,5 @@
 //******************************************************************************************************************************
-// Copyright (c) 2014-2018 Qualcomm Technologies, Inc.
+// Copyright (c) 2014-2019 Qualcomm Technologies, Inc.
 // All Rights Reserved.
 // Confidential and Proprietary - Qualcomm Technologies, Inc.
 //******************************************************************************************************************************
@@ -58,7 +58,7 @@ public:
     /// Base class implementation of get attached window surface size
     virtual EGLVOID GetAttachedDimensions(EGLINT* pWidth, EGLINT* pHeight) {}
     /// Perform cache operations
-    virtual EGLVOID CacheOperation(EglCacheCommands cacheCommand) {}
+    virtual EGLVOID CacheOperation(EglCacheCommands cacheCommand, EGLVOID* pCpuAddress) {}
     /// Notify on flush complete
     virtual EGLVOID NotifyFlushComplete(EglResourceAccessInfo* pAccessInfo) {}
 

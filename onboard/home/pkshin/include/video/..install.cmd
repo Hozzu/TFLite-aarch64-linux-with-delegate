@@ -1,0 +1,1 @@
+cmd_/home/pkshin//include/video/.install := /bin/sh scripts/headers_install.sh /home/pkshin//include/video ./include/uapi/video edid.h sisfb.h uvesafb.h; /bin/sh scripts/headers_install.sh /home/pkshin//include/video ./include/generated/uapi/video ; touch /home/pkshin//include/video/.install

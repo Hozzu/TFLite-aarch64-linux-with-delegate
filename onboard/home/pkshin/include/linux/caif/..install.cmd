@@ -1,0 +1,1 @@
+cmd_/home/pkshin//include/linux/caif/.install := /bin/sh scripts/headers_install.sh /home/pkshin//include/linux/caif ./include/uapi/linux/caif caif_socket.h if_caif.h; /bin/sh scripts/headers_install.sh /home/pkshin//include/linux/caif ./include/generated/uapi/linux/caif ; touch /home/pkshin//include/linux/caif/.install

@@ -319,8 +319,10 @@ This constant specifies the default maximum file and format string length.
   #define MSG_SSID_TEMPERATURE_MONITOR   130
   #define MSG_SSID_GPSFFT                131
   #define MSG_SSID_SSGSCA         132
+  #define MSG_SSID_GPM            133
+  #define MSG_SSID_TELUX          134
 
-#define MSG_SSID_GEN_LAST   132
+#define MSG_SSID_GEN_LAST   134
 
 
 /* Messages arising from ONCRPC AMSS modules */

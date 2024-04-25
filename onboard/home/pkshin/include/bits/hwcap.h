@@ -1,48 +1,56 @@
-/*
- * Copyright (C) 2005-2011 by Wind River Systems, Inc.
- *
- * SPDX-License-Identifier: MIT
- * 
- */
+/* Defines for bits in AT_HWCAP.  AArch64 Linux version.
+   Copyright (C) 2016-2020 Free Software Foundation, Inc.
+   This file is part of the GNU C Library.
 
-#pragma once
+   The GNU C Library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU Lesser General Public
+   License as published by the Free Software Foundation; either
+   version 2.1 of the License, or (at your option) any later version.
 
-#if defined (__bpf__)
-#define __MHWORDSIZE			64
-#elif defined (__arm__)
-#define __MHWORDSIZE			32
-#elif defined (__aarch64__) && defined ( __LP64__)
-#define __MHWORDSIZE			64
-#elif defined (__aarch64__)
-#define __MHWORDSIZE			32
-#else
-#include <bits/wordsize.h>
-#if defined (__WORDSIZE)
-#define __MHWORDSIZE			__WORDSIZE
-#else
-#error "__WORDSIZE is not defined"
-#endif
+   The GNU C Library is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Lesser General Public License for more details.
+
+   You should have received a copy of the GNU Lesser General Public
+   License along with the GNU C Library; if not, see
+   <https://www.gnu.org/licenses/>.  */
+
+#if !defined (_SYS_AUXV_H)
+# error "Never include <bits/hwcap.h> directly; use <sys/auxv.h> instead."
 #endif
 
-#if __MHWORDSIZE == 32
-
-#ifdef _MIPS_SIM
-
-#if _MIPS_SIM == _ABIO32
-#include <bits/hwcap-32.h>
-#elif _MIPS_SIM == _ABIN32
-#include <bits/hwcap-n32.h>
-#else
-#error "Unknown _MIPS_SIM"
-#endif
-
-#else /* _MIPS_SIM is not defined */
-#include <bits/hwcap-32.h>
-#endif
-
-#elif __MHWORDSIZE == 64
-#include <bits/hwcap-64.h>
-#else
-#error "Unknown __WORDSIZE detected"
-#endif /* matches #if __WORDSIZE == 32 */
-  
+/* The following must match the kernel's <asm/hwcap.h> and update the
+   list together with sysdeps/unix/sysv/linux/aarch64/dl-procinfo.c.  */
+#define HWCAP_FP		(1 << 0)
+#define HWCAP_ASIMD		(1 << 1)
+#define HWCAP_EVTSTRM		(1 << 2)
+#define HWCAP_AES		(1 << 3)
+#define HWCAP_PMULL		(1 << 4)
+#define HWCAP_SHA1		(1 << 5)
+#define HWCAP_SHA2		(1 << 6)
+#define HWCAP_CRC32		(1 << 7)
+#define HWCAP_ATOMICS		(1 << 8)
+#define HWCAP_FPHP		(1 << 9)
+#define HWCAP_ASIMDHP		(1 << 10)
+#define HWCAP_CPUID		(1 << 11)
+#define HWCAP_ASIMDRDM		(1 << 12)
+#define HWCAP_JSCVT		(1 << 13)
+#define HWCAP_FCMA		(1 << 14)
+#define HWCAP_LRCPC		(1 << 15)
+#define HWCAP_DCPOP		(1 << 16)
+#define HWCAP_SHA3		(1 << 17)
+#define HWCAP_SM3		(1 << 18)
+#define HWCAP_SM4		(1 << 19)
+#define HWCAP_ASIMDDP		(1 << 20)
+#define HWCAP_SHA512		(1 << 21)
+#define HWCAP_SVE		(1 << 22)
+#define HWCAP_ASIMDFHM		(1 << 23)
+#define HWCAP_DIT		(1 << 24)
+#define HWCAP_USCAT		(1 << 25)
+#define HWCAP_ILRCPC		(1 << 26)
+#define HWCAP_FLAGM		(1 << 27)
+#define HWCAP_SSBS		(1 << 28)
+#define HWCAP_SB		(1 << 29)
+#define HWCAP_PACA		(1 << 30)
+#define HWCAP_PACG		(1UL << 31)

@@ -1,0 +1,1 @@
+cmd_/home/pkshin//include/linux/mmc/.install := /bin/sh scripts/headers_install.sh /home/pkshin//include/linux/mmc ./include/uapi/linux/mmc ioctl.h; /bin/sh scripts/headers_install.sh /home/pkshin//include/linux/mmc ./include/generated/uapi/linux/mmc ; touch /home/pkshin//include/linux/mmc/.install

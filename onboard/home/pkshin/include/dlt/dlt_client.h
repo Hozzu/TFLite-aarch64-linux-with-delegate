@@ -1,5 +1,4 @@
 /*
- * @licence app begin@
  * SPDX license identifier: MPL-2.0
  *
  * Copyright (C) 2011-2015, BMW AG
@@ -12,7 +11,6 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/.
  *
  * For further information see http://www.genivi.org/.
- * @licence end@
  */
 
 /*!
@@ -77,20 +75,23 @@
 
 #   include "dlt_types.h"
 #   include "dlt_common.h"
+#include <stdbool.h>
 
 typedef enum
 {
     DLT_CLIENT_MODE_UNDEFINED = -1,
     DLT_CLIENT_MODE_TCP,
     DLT_CLIENT_MODE_SERIAL,
-    DLT_CLIENT_MODE_UNIX
+    DLT_CLIENT_MODE_UNIX,
+    DLT_CLIENT_MODE_UDP_MULTICAST
 } DltClientMode;
 
 typedef struct
 {
     DltReceiver receiver;  /**< receiver pointer to dlt receiver structure */
     int sock;              /**< sock Connection handle/socket */
-    char *servIP;          /**< servIP IP adress/Hostname of TCP/IP interface */
+    char *servIP;          /**< servIP IP adress/Hostname of interface */
+    char *hostip;          /**< hostip IP address of UDP host receiver interface */
     int port;              /**< Port for TCP connections (optional) */
     char *serialDevice;    /**< serialDevice Devicename of serial device */
     char *socketPath;      /**< socketPath Unix socket path */
@@ -104,6 +105,7 @@ extern "C" {
 #   endif
 
 void dlt_client_register_message_callback(int (*registerd_callback)(DltMessage *message, void *data));
+void dlt_client_register_fetch_next_message_callback(bool (*registerd_callback)(void *data));
 
 /**
  * Initialising dlt client structure with a specific port
@@ -174,7 +176,7 @@ DltReturnValue dlt_client_send_inject_msg(DltClient *client,
  * @param client pointer to dlt client structure
  * @param apid application id
  * @param ctid context id
- * @param SendLogLevel Log Level
+ * @param logLevel Log Level
  * @return Value from DltReturnValue enum
  */
 DltReturnValue dlt_client_send_log_level(DltClient *client, char *apid, char *ctid, uint8_t logLevel);
@@ -198,13 +200,11 @@ DltReturnValue dlt_client_get_default_log_level(DltClient *client);
 int dlt_client_get_software_version(DltClient *client);
 /**
  * Initialise get log info structure
- * @param void
  * @return void
  */
 void dlt_getloginfo_init(void);
 /**
  * To free the memory allocated for app description in get log info
- * @param void
  * @return void
  */
 void dlt_getloginfo_free(void);
@@ -213,7 +213,7 @@ void dlt_getloginfo_free(void);
  * @param client pointer to dlt client structure
  * @param apid application id
  * @param ctid context id
- * @param defaultTraceStatus Default Trace Status
+ * @param traceStatus Default Trace Status
  * @return Value from DltReturnValue enum
  */
 DltReturnValue dlt_client_send_trace_status(DltClient *client, char *apid, char *ctid, uint8_t traceStatus);
@@ -274,25 +274,41 @@ DltReturnValue dlt_client_send_reset_to_factory_default(DltClient *client);
 DltReturnValue dlt_client_setbaudrate(DltClient *client, int baudrate);
 
 /**
+ * Set mode within dlt client structure
+ * @param client pointer to dlt client structure
+ * @param mode DltClientMode
+ * @return Value from DltReturnValue enum
+ */
+DltReturnValue dlt_client_set_mode(DltClient *client, DltClientMode mode);
+
+/**
  * Set server ip
  * @param client pointer to dlt client structure
- * @param pointer to command line argument
+ * @param ipaddr pointer to command line argument
  * @return negative value if there was an error
  */
 int dlt_client_set_server_ip(DltClient *client, char *ipaddr);
 
 /**
+ * Set server UDP host receiver interface address
+ * @param client pointer to dlt client structure
+ * @param hostip pointer to multicast group address
+ * @return negative value if there was an error
+ */
+int dlt_client_set_host_if_address(DltClient *client, char *hostip);
+
+/**
  * Set serial device
- * @client pointer to dlt client structure
- * @param param pointer to command line argument
+ * @param client pointer to dlt client structure
+ * @param serial_device pointer to command line argument
  * @return negative value if there was an error
  */
 int dlt_client_set_serial_device(DltClient *client, char *serial_device);
 
 /**
  * Set socket path
- * @client pointer to dlt client structure
- * @param param pointer to socket path string
+ * @param client pointer to dlt client structure
+ * @param socket_path pointer to socket path string
  * @return negative value if there was an error
  */
 int dlt_client_set_socket_path(DltClient *client, char *socket_path);

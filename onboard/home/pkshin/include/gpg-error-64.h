@@ -66,12 +66,12 @@
 #include <stdarg.h>
 
 /* The version string of this header. */
-#define GPG_ERROR_VERSION "1.36-unknown"
-#define GPGRT_VERSION     "1.36-unknown"
+#define GPG_ERROR_VERSION "1.37-unknown"
+#define GPGRT_VERSION     "1.37-unknown"
 
 /* The version number of this header. */
-#define GPG_ERROR_VERSION_NUMBER 0x012400
-#define GPGRT_VERSION_NUMBER     0x012400
+#define GPG_ERROR_VERSION_NUMBER 0x012500
+#define GPGRT_VERSION_NUMBER     0x012500
 
 
 #ifdef __GNUC__
@@ -434,6 +434,10 @@ typedef enum
     GPG_ERR_WRONG_NAME = 313,
     GPG_ERR_NO_AUTH = 314,
     GPG_ERR_BAD_AUTH = 315,
+    GPG_ERR_NO_KEYBOXD = 316,
+    GPG_ERR_KEYBOXD = 317,
+    GPG_ERR_NO_SERVICE = 318,
+    GPG_ERR_SERVICE = 319,
     GPG_ERR_SYSTEM_BUG = 666,
     GPG_ERR_DNS_UNKNOWN = 711,
     GPG_ERR_DNS_SECTION = 712,
@@ -540,6 +544,37 @@ typedef enum
     GPG_ERR_USER_14 = 1037,
     GPG_ERR_USER_15 = 1038,
     GPG_ERR_USER_16 = 1039,
+    GPG_ERR_SQL_OK = 1500,
+    GPG_ERR_SQL_ERROR = 1501,
+    GPG_ERR_SQL_INTERNAL = 1502,
+    GPG_ERR_SQL_PERM = 1503,
+    GPG_ERR_SQL_ABORT = 1504,
+    GPG_ERR_SQL_BUSY = 1505,
+    GPG_ERR_SQL_LOCKED = 1506,
+    GPG_ERR_SQL_NOMEM = 1507,
+    GPG_ERR_SQL_READONLY = 1508,
+    GPG_ERR_SQL_INTERRUPT = 1509,
+    GPG_ERR_SQL_IOERR = 1510,
+    GPG_ERR_SQL_CORRUPT = 1511,
+    GPG_ERR_SQL_NOTFOUND = 1512,
+    GPG_ERR_SQL_FULL = 1513,
+    GPG_ERR_SQL_CANTOPEN = 1514,
+    GPG_ERR_SQL_PROTOCOL = 1515,
+    GPG_ERR_SQL_EMPTY = 1516,
+    GPG_ERR_SQL_SCHEMA = 1517,
+    GPG_ERR_SQL_TOOBIG = 1518,
+    GPG_ERR_SQL_CONSTRAINT = 1519,
+    GPG_ERR_SQL_MISMATCH = 1520,
+    GPG_ERR_SQL_MISUSE = 1521,
+    GPG_ERR_SQL_NOLFS = 1522,
+    GPG_ERR_SQL_AUTH = 1523,
+    GPG_ERR_SQL_FORMAT = 1524,
+    GPG_ERR_SQL_RANGE = 1525,
+    GPG_ERR_SQL_NOTADB = 1526,
+    GPG_ERR_SQL_NOTICE = 1527,
+    GPG_ERR_SQL_WARNING = 1528,
+    GPG_ERR_SQL_ROW = 1600,
+    GPG_ERR_SQL_DONE = 1601,
     GPG_ERR_MISSING_ERRNO = 16381,
     GPG_ERR_UNKNOWN_ERRNO = 16382,
     GPG_ERR_EOF = 16383,
@@ -981,6 +1016,13 @@ int gpg_err_code_to_errno (gpg_err_code_t code);
  * returns GPG_ERR_UNKNOWN_ERRNO if the system error is not mapped
  * (report this) and GPG_ERR_MISSING_ERRNO if ERRNO has the value 0. */
 gpg_err_code_t gpg_err_code_from_syserror (void);
+
+/* Mapper for SQLite primary error codes.  */
+static GPG_ERR_INLINE gpg_error_t
+gpg_err_code_from_sqlite (int sqlres)
+{
+  return sqlres? GPG_ERR_SQL_OK + (sqlres & 0xff) : 0;
+}
 
 
 /* Set the ERRNO variable.  This function is the preferred way to set

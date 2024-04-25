@@ -1,48 +1,41 @@
-/*
- * Copyright (C) 2005-2011 by Wind River Systems, Inc.
- *
- * SPDX-License-Identifier: MIT
- * 
- */
+/* AArch64 internal rwlock struct definitions.
+   Copyright (C) 2019-2020 Free Software Foundation, Inc.
 
-#pragma once
+   This file is part of the GNU C Library.
 
-#if defined (__bpf__)
-#define __MHWORDSIZE			64
-#elif defined (__arm__)
-#define __MHWORDSIZE			32
-#elif defined (__aarch64__) && defined ( __LP64__)
-#define __MHWORDSIZE			64
-#elif defined (__aarch64__)
-#define __MHWORDSIZE			32
-#else
-#include <bits/wordsize.h>
-#if defined (__WORDSIZE)
-#define __MHWORDSIZE			__WORDSIZE
-#else
-#error "__WORDSIZE is not defined"
+   The GNU C Library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU Lesser General Public
+   License as published by the Free Software Foundation; either
+   version 2.1 of the License, or (at your option) any later version.
+
+   The GNU C Library is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Lesser General Public License for more details.
+
+   You should have received a copy of the GNU Lesser General Public
+   License along with the GNU C Library; if not, see
+   <http://www.gnu.org/licenses/>.  */
+
+#ifndef _RWLOCK_INTERNAL_H
+#define _RWLOCK_INTERNAL_H
+
+struct __pthread_rwlock_arch_t
+{
+  unsigned int __readers;
+  unsigned int __writers;
+  unsigned int __wrphase_futex;
+  unsigned int __writers_futex;
+  unsigned int __pad3;
+  unsigned int __pad4;
+  int __cur_writer;
+  int __shared;
+  unsigned long int __pad1;
+  unsigned long int __pad2;
+  unsigned int __flags;
+};
+
+#define __PTHREAD_RWLOCK_INITIALIZER(__flags) \
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, __flags
+
 #endif
-#endif
-
-#if __MHWORDSIZE == 32
-
-#ifdef _MIPS_SIM
-
-#if _MIPS_SIM == _ABIO32
-#include <bits/struct_rwlock-32.h>
-#elif _MIPS_SIM == _ABIN32
-#include <bits/struct_rwlock-n32.h>
-#else
-#error "Unknown _MIPS_SIM"
-#endif
-
-#else /* _MIPS_SIM is not defined */
-#include <bits/struct_rwlock-32.h>
-#endif
-
-#elif __MHWORDSIZE == 64
-#include <bits/struct_rwlock-64.h>
-#else
-#error "Unknown __WORDSIZE detected"
-#endif /* matches #if __WORDSIZE == 32 */
-  

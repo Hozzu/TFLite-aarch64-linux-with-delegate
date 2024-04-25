@@ -7,7 +7,6 @@
 #ifndef _QCARCAM_CLINENT_H
 #define _QCARCAM_CLINENT_H
 
-#include "qcarcam.h"
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -19,7 +18,40 @@ extern "C" {
 /// @param buf_ptr     frame buffer ptr
 /// @param buf_len     frame buffer length
 ///////////////////////////////////////////////////////////////////////////////
-typedef void (*qcarcam_client_event_cb_t) (qcarcam_input_desc_t input_id, unsigned char* buf_ptr, size_t buf_len);
+
+
+
+
+typedef enum{
+    QCARCAM_STATE_INVALID = 0,
+    QCARCAM_STATE_INIT,
+    QCARCAM_STATE_OPEN,
+    QCARCAM_STATE_START,
+    QCARCAM_STATE_STOP,
+    QCARCAM_STATE_PAUSE,
+    QCARCAM_STATE_ERROR,
+    QCARCAM_STATE_PAUSE_STOP_PENDING,
+    QCARCAM_STATE_OK,
+    QCARCAM_STATE_FREEZE,
+    QACRCAM_STATE_UNKNOW
+
+}qcarcam_status;
+
+typedef void (*qcarcam_client_event_cb_t) (int input_id, unsigned char* buf_ptr, size_t buf_len);
+
+
+
+///////////////////////////////////////////////////////////////////////////////
+/// qcarcam_client_getCamStatus
+///
+/// @brief get camera status
+///
+/// @param index     camera index
+///
+/// @return qcarcam_status
+///////////////////////////////////////////////////////////////////////////////
+
+qcarcam_status qcarcam_client_getCamStatus(int index);
 
 ///////////////////////////////////////////////////////////////////////////////
 /// qcarcam_client_start_preview
@@ -31,7 +63,22 @@ typedef void (*qcarcam_client_event_cb_t) (qcarcam_input_desc_t input_id, unsign
 ///
 /// @return QCARCAM_RET_OK if successful
 ///////////////////////////////////////////////////////////////////////////////
-qcarcam_ret_t qcarcam_client_start_preview(const char* filename, qcarcam_client_event_cb_t cb_func);
+int qcarcam_client_start_preview(const char* filename, qcarcam_client_event_cb_t cb_func);
+
+
+///////////////////////////////////////////////////////////////////////////////
+/// qcarcam_client_start_preview
+///
+/// @brief Initialize QCarCam. And start preview
+///
+/// @param filename     config xml file
+/// @param cbFunc       callback function to get new frame
+/// @param option       bitfield ( QCARCAM_OPT_NODISPLAY, QCARCAM_OPT_FATAL_COVER)
+/// @return QCARCAM_RET_OK if successful
+///////////////////////////////////////////////////////////////////////////////
+#define QCARCAM_OPT_NODISPLAY       (1<<0)
+#define QCARCAM_OPT_FATAL_COVER     (1<<1)
+int qcarcam_client_start(const char* filename, qcarcam_client_event_cb_t cb_func, unsigned int option);
 
 ///////////////////////////////////////////////////////////////////////////////
 /// qcarcam_client_stop_preview
@@ -40,8 +87,9 @@ qcarcam_ret_t qcarcam_client_start_preview(const char* filename, qcarcam_client_
 ///
 /// @return QCARCAM_RET_OK if successful
 ///////////////////////////////////////////////////////////////////////////////
-qcarcam_ret_t qcarcam_client_stop_preview(void);
+int qcarcam_client_stop_preview(void);
 
+unsigned char * qcarcam_client_get_buffer(int camera_id);
 
 #ifdef __cplusplus
 }

@@ -23,6 +23,11 @@ extern "C" {
 #endif
 
 #include <stdint.h>
+
+#ifndef ENOATTR
+# define ENOATTR ENODATA
+#endif
+
 /*
  *	An almost-IRIX-compatible extended attributes API
  *	(the IRIX attribute "list" operation is missing, added ATTR_SECURE).
@@ -121,9 +126,11 @@ typedef struct attr_multiop {
  * The return value is -1 on error (w/errno set appropriately), 0 on success.
  */
 extern int attr_get (const char *__path, const char *__attrname,
-			char *__attrvalue, int *__valuelength, int __flags);
+			char *__attrvalue, int *__valuelength, int __flags)
+	__attribute__ ((deprecated ("Use getxattr or lgetxattr instead")));
 extern int attr_getf (int __fd, const char *__attrname, char *__attrvalue,
-			int *__valuelength, int __flags);
+			int *__valuelength, int __flags)
+	__attribute__ ((deprecated ("Use fgetxattr instead")));
 
 /*
  * Set the value of an attribute, creating the attribute if necessary.
@@ -131,18 +138,22 @@ extern int attr_getf (int __fd, const char *__attrname, char *__attrvalue,
  */
 extern int attr_set (const char *__path, const char *__attrname,
 			const char *__attrvalue, const int __valuelength,
-			int __flags);
+			int __flags)
+	__attribute__ ((deprecated ("Use setxattr or lsetxattr instead")));
 extern int attr_setf (int __fd, const char *__attrname,
 			const char *__attrvalue, const int __valuelength,
-			int __flags);
+			int __flags)
+	__attribute__ ((deprecated ("Use fsetxattr instead")));
 
 /*
  * Remove an attribute.
  * The return value is -1 on error (w/errno set appropriately), 0 on success.
  */
 extern int attr_remove (const char *__path, const char *__attrname,
-			int __flags);
-extern int attr_removef (int __fd, const char *__attrname, int __flags);
+			int __flags)
+	__attribute__ ((deprecated ("Use removexattr or lremovexattr instead")));
+extern int attr_removef (int __fd, const char *__attrname, int __flags)
+	__attribute__ ((deprecated ("Use fremovexattr instead")));
 
 /*
  * List the names and sizes of the values of all the attributes of an object.
@@ -151,10 +162,12 @@ extern int attr_removef (int __fd, const char *__attrname, int __flags);
  * fit into the buffer on the first system call.
  * The return value is -1 on error (w/errno set appropriately), 0 on success.
  */
-int attr_list(const char *__path, char *__buffer, const int __buffersize,
-		int __flags, attrlist_cursor_t *__cursor);
-int attr_listf(int __fd, char *__buffer, const int __buffersize,
-		int __flags, attrlist_cursor_t *__cursor);
+extern int attr_list(const char *__path, char *__buffer, const int __buffersize,
+		int __flags, attrlist_cursor_t *__cursor)
+	__attribute__ ((deprecated ("Use listxattr or llistxattr instead")));
+extern int attr_listf(int __fd, char *__buffer, const int __buffersize,
+		int __flags, attrlist_cursor_t *__cursor)
+	__attribute__ ((deprecated ("Use flistxattr instead")));
 
 /*
  * Operate on multiple attributes of the same object simultaneously.
@@ -174,9 +187,11 @@ int attr_listf(int __fd, char *__buffer, const int __buffersize,
  * to a ATTR_OP_GET are the same as the args to an attr_get() call.
  */
 extern int attr_multi (const char *__path, attr_multiop_t *__oplist,
-			int __count, int __flags);
+			int __count, int __flags)
+	__attribute__ ((deprecated ("Use getxattr, setxattr, listxattr, removexattr instead")));
 extern int attr_multif (int __fd, attr_multiop_t *__oplist,
-			int __count, int __flags);
+			int __count, int __flags)
+	__attribute__ ((deprecated ("Use getxattr, setxattr, listxattr, removexattr instead")));
 
 #ifdef __cplusplus
 }

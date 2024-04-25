@@ -330,6 +330,8 @@ when       who     what, where, why
 #define MSG_BUILD_MASK_MSG_SSID_TEMPERATURE_MONITOR            (MSG_LVL_HIGH)
 #define MSG_BUILD_MASK_MSG_SSID_GPSFFT                         (MSG_LVL_LOW | MSG_LVL_MED | MSG_LVL_HIGH | MSG_LVL_ERROR)
 #define MSG_BUILD_MASK_MSG_SSID_SSGSCA         (MSG_LVL_HIGH)
+#define MSG_BUILD_MASK_MSG_SSID_GPM             (MSG_LVL_LOW)
+#define MSG_BUILD_MASK_MSG_SSID_TELUX           (MSG_LVL_LOW)
 
 /* ONCRPC related SSIDs */
 #define MSG_BUILD_MASK_MSG_SSID_ONCRPC            (MSG_LVL_MED)

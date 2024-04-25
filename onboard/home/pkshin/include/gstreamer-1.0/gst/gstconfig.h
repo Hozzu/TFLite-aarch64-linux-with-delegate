@@ -73,14 +73,14 @@
  *
  * Configures the inclusion of the debugging subsystem
  */
-/* #undef GST_DISABLE_GST_DEBUG */
+#undef GST_DISABLE_GST_DEBUG
 
 /**
  * GST_DISABLE_PARSE:
  *
  * Configures the inclusion of the gst-launch parser
  */
-/* #undef GST_DISABLE_PARSE */
+#undef GST_DISABLE_PARSE
 
 /**
  * GST_DISABLE_REGISTRY:
@@ -89,7 +89,7 @@
  * If one disables this, required plugins need to be loaded and registered
  * manually
  */
-/* #undef GST_DISABLE_REGISTRY */
+#undef GST_DISABLE_REGISTRY
 
 /**
  * GST_DISABLE_CAST_CHECKS:
@@ -115,7 +115,7 @@
 
 /* FIXME: test and document these! */
 /* Configures the use of external plugins */
-/* #undef GST_DISABLE_PLUGIN */
+#undef GST_DISABLE_PLUGIN
 
 /* Whether or not the CPU supports unaligned access
  * The macros used are defined consistently by GCC, Clang, MSVC, Sun, and ICC

@@ -1,0 +1,1 @@
+cmd_/home/pkshin//include/linux/raid/.install := /bin/sh scripts/headers_install.sh /home/pkshin//include/linux/raid ./include/uapi/linux/raid md_p.h md_u.h; /bin/sh scripts/headers_install.sh /home/pkshin//include/linux/raid ./include/generated/uapi/linux/raid ; touch /home/pkshin//include/linux/raid/.install

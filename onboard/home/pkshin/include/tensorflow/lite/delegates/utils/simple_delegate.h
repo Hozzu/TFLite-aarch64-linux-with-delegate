@@ -29,9 +29,12 @@ limitations under the License.
 #ifndef TENSORFLOW_LITE_DELEGATES_UTILS_SIMPLE_DELEGATE_H_
 #define TENSORFLOW_LITE_DELEGATES_UTILS_SIMPLE_DELEGATE_H_
 
-#include <memory>
+#include <stdint.h>
 
-#include "tensorflow/lite/c/common.h"
+#include <memory>
+#include <utility>
+
+#include "tensorflow/lite/core/c/common.h"
 
 namespace tflite {
 
@@ -42,7 +45,7 @@ using TfLiteDelegateUniquePtr =
 // Each instance represents a single part of the graph (subgraph).
 class SimpleDelegateKernelInterface {
  public:
-  virtual ~SimpleDelegateKernelInterface() {}
+  virtual ~SimpleDelegateKernelInterface() = default;
 
   // Initializes a delegated subgraph.
   // The nodes in the subgraph are inside TfLiteDelegateParams->nodes_to_replace
@@ -56,21 +59,26 @@ class SimpleDelegateKernelInterface {
 
   // Actual subgraph inference should happen on this call.
   // Returns status, and signalling any errors.
+  // NOTE: Tensor data pointers (tensor->data) can change every inference, so
+  // the implementation of this method needs to take that into account.
   virtual TfLiteStatus Eval(TfLiteContext* context, TfLiteNode* node) = 0;
 };
 
 // Pure Interface that clients should implement.
-// The Interface represents a delegate capabilities and provide factory
-// for SimpleDelegateKernelInterface
+// The Interface represents a delegate's capabilities and provides a factory
+// for SimpleDelegateKernelInterface.
 //
 // Clients should implement the following methods:
 // - IsNodeSupportedByDelegate
 // - Initialize
-// - name
+// - Name
 // - CreateDelegateKernelInterface
+// - DelegateOptions
 class SimpleDelegateInterface {
  public:
-  // Options for configuring a delegate.
+  // Properties of a delegate.  These are used by TfLiteDelegateFactory to
+  // help determine how to partition the graph, i.e. which nodes each delegate
+  // will get applied to.
   struct Options {
     // Maximum number of delegated subgraph, values <=0 means unlimited.
     int max_delegated_partitions = 0;
@@ -80,7 +88,7 @@ class SimpleDelegateInterface {
     int min_nodes_per_partition = 0;
   };
 
-  virtual ~SimpleDelegateInterface() {}
+  virtual ~SimpleDelegateInterface() = default;
 
   // Returns true if 'node' is supported by the delegate. False otherwise.
   virtual bool IsNodeSupportedByDelegate(const TfLiteRegistration* registration,
@@ -104,8 +112,35 @@ class SimpleDelegateInterface {
   virtual std::unique_ptr<SimpleDelegateKernelInterface>
   CreateDelegateKernelInterface() = 0;
 
-  // Returns SimpleDelegateInterface::Options which has the delegate options.
+  // Returns SimpleDelegateInterface::Options which has delegate properties
+  // relevant for graph partitioning.
   virtual SimpleDelegateInterface::Options DelegateOptions() const = 0;
+
+  /// Optional method for supporting hardware buffers.
+  /// Copies the data from delegate buffer handle into raw memory of the given
+  /// `tensor`. Note that the delegate is allowed to allocate the raw bytes as
+  /// long as it follows the rules for kTfLiteDynamic tensors.
+  virtual TfLiteStatus CopyFromBufferHandle(TfLiteContext* context,
+                                            TfLiteBufferHandle buffer_handle,
+                                            TfLiteTensor* tensor) {
+    return kTfLiteError;
+  }
+
+  /// Optional method for supporting hardware buffers.
+  /// Copies the data from raw memory of the given `tensor` to delegate buffer
+  /// handle.
+  virtual TfLiteStatus CopyToBufferHandle(TfLiteContext* context,
+                                          TfLiteBufferHandle buffer_handle,
+                                          const TfLiteTensor* tensor) {
+    return kTfLiteError;
+  }
+
+  /// Optional method for supporting hardware buffers.
+  /// Frees the Delegate Buffer Handle. Note: This only frees the handle, but
+  /// this doesn't release the underlying resource (e.g. textures). The
+  /// resources are either owned by application layer or the delegate.
+  virtual void FreeBufferHandle(TfLiteContext* context,
+                                TfLiteBufferHandle* handle) {}
 };
 
 // Factory class that provides static methods to deal with SimpleDelegate

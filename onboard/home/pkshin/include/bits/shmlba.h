@@ -1,48 +1,29 @@
-/*
- * Copyright (C) 2005-2011 by Wind River Systems, Inc.
- *
- * SPDX-License-Identifier: MIT
- * 
- */
+/* Define SHMLBA.  Generic version.
+   Copyright (C) 2018-2020 Free Software Foundation, Inc.
+   This file is part of the GNU C Library.
 
-#pragma once
+   The GNU C Library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU Lesser General Public
+   License as published by the Free Software Foundation; either
+   version 2.1 of the License, or (at your option) any later version.
 
-#if defined (__bpf__)
-#define __MHWORDSIZE			64
-#elif defined (__arm__)
-#define __MHWORDSIZE			32
-#elif defined (__aarch64__) && defined ( __LP64__)
-#define __MHWORDSIZE			64
-#elif defined (__aarch64__)
-#define __MHWORDSIZE			32
-#else
-#include <bits/wordsize.h>
-#if defined (__WORDSIZE)
-#define __MHWORDSIZE			__WORDSIZE
-#else
-#error "__WORDSIZE is not defined"
-#endif
+   The GNU C Library is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Lesser General Public License for more details.
+
+   You should have received a copy of the GNU Lesser General Public
+   License along with the GNU C Library; if not, see
+   <https://www.gnu.org/licenses/>.  */
+
+#ifndef _SYS_SHM_H
+# error "Never use <bits/shmlba.h> directly; include <sys/shm.h> instead."
 #endif
 
-#if __MHWORDSIZE == 32
+__BEGIN_DECLS
 
-#ifdef _MIPS_SIM
+/* Segment low boundary address multiple.  */
+#define SHMLBA		(__getpagesize ())
+extern int __getpagesize (void) __THROW __attribute__ ((__const__));
 
-#if _MIPS_SIM == _ABIO32
-#include <bits/shmlba-32.h>
-#elif _MIPS_SIM == _ABIN32
-#include <bits/shmlba-n32.h>
-#else
-#error "Unknown _MIPS_SIM"
-#endif
-
-#else /* _MIPS_SIM is not defined */
-#include <bits/shmlba-32.h>
-#endif
-
-#elif __MHWORDSIZE == 64
-#include <bits/shmlba-64.h>
-#else
-#error "Unknown __WORDSIZE detected"
-#endif /* matches #if __WORDSIZE == 32 */
-  
+__END_DECLS

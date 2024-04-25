@@ -1347,6 +1347,8 @@ struct weston_view {
 
 	/* Indicate if this view is used for screen capture. */
 	bool is_capture_view;
+	/* Indicate if this view is completely covered by above opaque regions. */
+	bool is_completely_covered;
 
 };
 

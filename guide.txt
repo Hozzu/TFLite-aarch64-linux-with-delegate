@@ -1,4 +1,4 @@
-All build guide is based on tensorflow r2.7 source code.
+All build guide is based on tensorflow v2.16.1 source code.
 
 1. Tensorflow Lite for aarch64 linux with XNNPack delegate
 1) Build with bazel using following command
@@ -11,7 +11,7 @@ bazel build -c opt --copt=-DCL_DELEGATE_NO_GL --config=elinux_aarch64 //tensorfl
 
 
 3. Hexagon delegate for aarch64 linux
-1) Add following lines into bazel build for hexagon delegate to build shared library (tensorflow/tensorflow/lite/delegates/hexagon/BUILD)
+1) Add following lines into bazel build for hexagon delegate to build shared library (tensorflow/lite/delegates/hexagon/BUILD)
 cc_binary(
     name = "libtensorflowlite_hexagon_delegate.so",
     linkopts = [
@@ -38,7 +38,7 @@ https://www.tensorflow.org/lite/performance/hexagon_delegate
 
 
 4. NNAPI delegate for aarch64 linux (NOT TESTED)
-1) Add following lines into bazel build for nnapi delegate to build shared library (tensorflow/tensorflow/lite/delegates/nnapi/BUILD)
+1) Add following lines into bazel build for nnapi delegate to build shared library (tensorflow/lite/delegates/nnapi/BUILD)
 cc_binary(
     name = "libtensorflowlite_nnapi_delegate.so",
     linkopts = [

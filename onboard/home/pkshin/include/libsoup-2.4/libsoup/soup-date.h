@@ -58,9 +58,12 @@ char     *soup_date_to_string       (SoupDate       *date,
 				     SoupDateFormat  format);
 SOUP_AVAILABLE_IN_2_24
 time_t    soup_date_to_time_t       (SoupDate       *date);
+
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
 SOUP_AVAILABLE_IN_2_24
 void      soup_date_to_timeval      (SoupDate       *date,
 				     GTimeVal       *time);
+G_GNUC_END_IGNORE_DEPRECATIONS
 
 SOUP_AVAILABLE_IN_2_24
 gboolean  soup_date_is_past         (SoupDate       *date);

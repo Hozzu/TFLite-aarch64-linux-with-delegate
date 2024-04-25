@@ -1,0 +1,1 @@
+cmd_/home/pkshin//include/linux/hsi/.install := /bin/sh scripts/headers_install.sh /home/pkshin//include/linux/hsi ./include/uapi/linux/hsi cs-protocol.h hsi_char.h; /bin/sh scripts/headers_install.sh /home/pkshin//include/linux/hsi ./include/generated/uapi/linux/hsi ; touch /home/pkshin//include/linux/hsi/.install
