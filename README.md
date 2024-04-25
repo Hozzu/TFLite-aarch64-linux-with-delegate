@@ -18,4 +18,5 @@ For instruction, read README.md in each directory.
 
 It was tested on Qualcomm SA8195 platform which works on AGL (Automotive Grade Linux).  
 
-![image](https://user-images.githubusercontent.com/28533445/141428765-0113020a-b45f-4076-ba02-c75a23fc48b7.png)
+![image](https://github.com/Hozzu/TFLite-aarch64-linux-with-delegate/assets/28533445/53abdc94-ef59-4d20-92de-334f404dd4b9)
+
