@@ -2,7 +2,7 @@
 Deep learning inference SW framework based on TensorFlow Lite with delegates for Aarch64 Linux  
 
 In order to run deep learning application on Aarch64 Linux system (non-Android), I built tensorflow lite for such system.  
-It is based on **tensorflow v2.16.1**.  
+It is based on **tensorflow v2.16.2**.  
 
 I included XNNPACK, GPU, hexagon, and NNAPI delegates.  
 GPU delegate requires OpenCL library.  

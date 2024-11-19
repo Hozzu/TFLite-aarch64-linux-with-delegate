@@ -1,4 +1,4 @@
-All build guide is based on tensorflow v2.16.1 source code.
+All build guide is based on tensorflow v2.16.2 source code.
 
 1. Tensorflow Lite for aarch64 linux with XNNPack delegate
 1) Build with bazel using following command
