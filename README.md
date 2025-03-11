@@ -1,7 +1,7 @@
 # TFLite for Aarch64 Linux with Delegate
 Deep learning inference SW framework based on TensorFlow Lite with delegates for Aarch64 Linux  
 
-![Image](https://github.com/user-attachments/assets/ce36ce1d-ed8e-4c12-9b98-a727fe4c322b)
+![Image](https://github.com/user-attachments/assets/1f33da09-37c4-4328-8d25-98b44f53cb5a)
 
 In order to run deep learning application on Aarch64 Linux system (non-Android), I built tensorflow lite for such system.  
 It is based on **tensorflow v2.16.2**.  
